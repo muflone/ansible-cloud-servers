@@ -1,5 +1,5 @@
 - name: Create partitions (MBR)
-  ansible.builtin.command:
+  command:
     argv:
       - sgdisk
       - --align-end
@@ -14,11 +14,12 @@
   with_items:
     - "{{ system_disks }}"
   register: sgdisk
-  when: ansible_virtualization_role != 'host'
+  when:
+    - ansible_virtualization_role != 'host'
   changed_when: "sgdisk.rc == 0"
 
 - name: Create partitions (EFI)
-  ansible.builtin.command:
+  command:
     argv:
       - sgdisk
       - --align-end
@@ -30,15 +31,16 @@
   with_items:
     - "{{ system_disks }}"
   register: sgdisk
-  when: ansible_virtualization_role == 'host'
+  when:
+    - ansible_virtualization_role == 'host'
   changed_when: "sgdisk.rc == 0"
 
 - name: Store root partition number for later steps
-  ansible.builtin.set_fact:
+  set_fact:
     root_partno: "{{ '3' if ansible_virtualization_role == 'host' else '2' }}"
 
 - name: Format the root partition
-  ansible.builtin.command:
+  command:
     argv:
       - mkfs.ext4
       - -L
@@ -49,7 +51,7 @@
   changed_when: true
 
 - name: Format the EFI system partition
-  ansible.builtin.command:
+  command:
     argv:
       - mkfs.fat
       - -F
@@ -60,4 +62,5 @@
       - ESP
       - "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
   changed_when: false
-  when: ansible_virtualization_role == 'host'
+  when:
+    - ansible_virtualization_role == 'host'

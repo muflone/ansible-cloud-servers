@@ -1,5 +1,5 @@
 - name: Install GRUB (MBR)
-  ansible.builtin.command:
+  command:
     argv:
       - chroot
       - "{{ chroot_path }}"
@@ -13,7 +13,7 @@
   changed_when: "chroot_grub_install_legacy.rc == 0"
 
 - name: Install GRUB (EFI)
-  ansible.builtin.command:
+  command:
     argv:
       - chroot
       - "{{ chroot_path }}"
@@ -27,10 +27,11 @@
     - "{{ system_disks }}"
   register: chroot_grub_install_uefi
   changed_when: "chroot_grub_install_uefi.rc == 0"
-  when: ansible_virtualization_role == 'host'
+  when:
+    - ansible_virtualization_role == 'host'
 
 - name: Configure GRUB
-  ansible.builtin.command:
+  command:
     argv:
       - chroot
       - "{{ chroot_path }}"

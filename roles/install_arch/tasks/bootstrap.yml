@@ -1,5 +1,5 @@
 - name: Download Arch Linux bootstrap image
-  ansible.builtin.get_url:
+  get_url:
     url: "{{ item }}"
     dest: /tmp/
     mode: "0644"
@@ -8,7 +8,7 @@
     - https://archlinux.org/iso/{{ bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst.sig
 
 - name: Get Arch Linux ISO signature key
-  ansible.builtin.command:
+  command:
     argv:
       - gpg
       - --auto-key-locate
@@ -19,7 +19,7 @@
   changed_when: "gpg_locate.rc == 0"
 
 - name: Verify Arch Linux bootstrap image signature
-  ansible.builtin.command:
+  command:
     argv:
       - gpg
       - --keyserver-options
@@ -30,14 +30,14 @@
   changed_when: false
 
 - name: Extract Arch Linux boostrap image
-  ansible.builtin.unarchive:
+  unarchive:
     src: /tmp/archlinux-bootstrap-x86_64.tar.zst
     dest: /tmp
     remote_src: true
     creates: /tmp/root.x86_64
 
 - name: Copy resolv.conf to bootstrap chroot
-  ansible.builtin.copy:
+  copy:
     remote_src: true
     src: /etc/resolv.conf
     dest: /tmp/root.x86_64/etc/resolv.conf
@@ -46,7 +46,7 @@
     mode: "0644"
 
 - name: Mount /proc to bootstrap chroot
-  ansible.posix.mount:
+  mount:
     src: /proc
     path: /tmp/root.x86_64/proc
     state: mounted
@@ -54,7 +54,7 @@
     opts: rbind
 
 - name: Mount /sys to bootstrap chroot
-  ansible.posix.mount:
+  mount:
     src: /sys
     path: /tmp/root.x86_64/sys
     state: mounted
@@ -62,7 +62,7 @@
     opts: rbind
 
 - name: Mount /dev to bootstrap chroot
-  ansible.posix.mount:
+  mount:
     src: /dev
     path: /tmp/root.x86_64/dev
     state: mounted

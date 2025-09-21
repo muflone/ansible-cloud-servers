@@ -1,5 +1,5 @@
 - name: Configure sshd via drop-in
-  ansible.builtin.template:
+  template:
     src: sshd_config.j2
     dest: "{{ chroot_path }}/etc/ssh/sshd_config.d/override.conf"
     owner: root
@@ -7,7 +7,7 @@
     mode: "0644"
 
 - name: Copy SSH authorized_keys to /root/.ssh
-  ansible.builtin.copy:
+  copy:
     src: authorized_keys
     dest: "{{ chroot_path }}/root/.ssh/authorized_keys"
     owner: root
@@ -15,7 +15,7 @@
     mode: "0600"
 
 - name: Enable service sshd inside chroot
-  ansible.builtin.command:
+  command:
     argv:
       - chroot
       - "{{ chroot_path }}"
