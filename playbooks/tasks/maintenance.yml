@@ -2,4 +2,4 @@
   hosts: cloud
   gather_facts: yes
   roles:
-    - install_packages
+    - maintenance

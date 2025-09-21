@@ -1,0 +1,5 @@
+- name: Upgrade system
+  include_tasks: upgrade_packages.yml
+
+- name: Install packages
+  include_tasks: install_packages.yml

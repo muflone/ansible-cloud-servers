@@ -31,6 +31,7 @@
 - **playbooks/tasks/ping.yml**
 
   Check if all the hosts are up and reachable from ansible.
-- **playbooks/tasks/install_packages.yml**
+- **playbooks/tasks/maintenance.yml**
 
-  Upgrade and install some packages on all the hosts.
+  Execute regular maintenance, including upgrade the installed packages and
+- install extra packages on all the hosts.
