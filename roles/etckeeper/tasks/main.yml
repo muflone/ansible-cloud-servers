@@ -25,13 +25,13 @@
 
 - name: Check if /opt/etckeeper-etc.git exists
   stat:
-    path: "{{ etckeeper_dest }}"
-  register: etckeeper_dest_dir
+    path: "{{ etckeeper_path }}"
+  register: etckeeper_path_dir
 
 - name: Copy etckeeper from /etc to /opt
   copy:
     src: "{{ etckeeper_src }}/"
-    dest: "{{ etckeeper_dest }}/"
+    dest: "{{ etckeeper_path }}/"
     remote_src: yes
     mode: preserve
   when:
@@ -48,7 +48,7 @@
 
 - name: Create a symlink from /etc/.git to /opt/etckeeper-etc.git
   file:
-    src: "{{ etckeeper_dest }}"
+    src: "{{ etckeeper_path }}"
     dest: "{{ etckeeper_src }}"
     state: link
   when:
