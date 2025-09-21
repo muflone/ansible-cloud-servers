@@ -34,4 +34,4 @@
 - **playbooks/tasks/maintenance.yml**
 
   Execute regular maintenance, including upgrade the installed packages and
-- install extra packages on all the hosts.
+  install extra packages on all the hosts.
