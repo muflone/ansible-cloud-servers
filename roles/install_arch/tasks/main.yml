@@ -110,8 +110,7 @@
   changed_when: "chroot_systemd_services.rc == 0"
 
 - name: Configure networking
-  ansible.builtin.include_role:
-    name: chroot_networking
+  include_tasks: chroot_networking.yml
 
 - name: Configure SSH
   include_tasks: chroot_ssh.yml
