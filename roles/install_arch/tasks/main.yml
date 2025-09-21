@@ -4,44 +4,11 @@
 - name: Partitioning
   include_tasks: partitioning.yml
 
-- name: Set chroot path
-  ansible.builtin.set_fact:
-    chroot_path: "/mnt"
-
 - name: Get bootstrap ArchISO
   include_tasks: bootstrap.yml
 
-- name: Mount the root filesystem
-  ansible.posix.mount:
-    src: "{{ system_disks[0] }}{{ 'p' if 'nvme' in system_disks[0] }}{{ root_partno }}"
-    path: "{{ chroot_path }}"
-    state: mounted
-    fstype: ext4
-  when: filesystem == "ext4"
-
-- name: Create the efi mountpoint
-  ansible.builtin.file:
-    path: "{{ chroot_path }}/efi"
-    state: directory
-    mode: '0755'
-  when: ansible_virtualization_role == 'host'
-
-- name: Mount the efi filesystem
-  ansible.posix.mount:
-    src: "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
-    path: "{{ chroot_path }}/efi"
-    state: mounted
-    fstype: vfat
-  when: ansible_virtualization_role == 'host'
-
-- name: Mount chroot to bootstrap chroot
-  ansible.posix.mount:
-    src: "{{ chroot_path }}"
-    path: /tmp/root.x86_64/mnt
-    state: mounted
-    fstype: ext4
-    opts: rbind
-  when: filesystem == "ext4"
+- name: Mount devices in the chroot
+  include_tasks: chroot_mount.yml
 
 - name: Configure pacman mirror
   ansible.builtin.template:
@@ -105,30 +72,6 @@
         argv:
           - "{{ ucode | default('') }}"
       changed_when: true
-
-- name: Mount /proc to new chroot
-  ansible.posix.mount:
-    src: /proc
-    path: "{{ chroot_path }}/proc"
-    state: mounted
-    fstype: proc
-    opts: rbind
-
-- name: Mount /sys to new chroot
-  ansible.posix.mount:
-    src: /sys
-    path: "{{ chroot_path }}/sys"
-    state: mounted
-    fstype: sysfs
-    opts: rbind
-
-- name: Mount /dev to new chroot
-  ansible.posix.mount:
-    src: /dev
-    path: "{{ chroot_path }}/dev"
-    state: mounted
-    fstype: udev
-    opts: rbind
 
 - name: Run systemd-firstboot
   ansible.builtin.command:
