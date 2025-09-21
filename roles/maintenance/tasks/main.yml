@@ -7,4 +7,5 @@
     name: install_packages
 
 - name: Configure etckeeper
-  include_tasks: etckeeper.yml
+  include_role:
+    name: etckeeper
