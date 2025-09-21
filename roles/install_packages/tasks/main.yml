@@ -14,9 +14,10 @@
 
     - name: Install packages
       pacman:
-        name:
-          - hdparm
+        name: "{{ packages }}"
         state: present
+      when:
+        - packages is defined
 
 - name: Install packages (Debian / Ubuntu)
   when: ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
@@ -28,6 +29,7 @@
 
     - name: Install packages
       apt:
-        name:
-          - hdparm
+        name: "{{ packages }}"
         state: present
+      when:
+        - packages is defined
