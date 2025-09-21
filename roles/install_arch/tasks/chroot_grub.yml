@@ -1,0 +1,40 @@
+- name: Install grub (MBR)
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - grub-install
+      - --target=i386-pc
+      - --recheck
+      - "{{ item }}"
+  with_items:
+    - "{{ system_disks }}"
+  register: chroot_grub_install_legacy
+  changed_when: "chroot_grub_install_legacy.rc == 0"
+
+- name: Install grub (EFI)
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - grub-install
+      - --target=x86_64-efi
+      - --efi-directory=/efi
+      - --removable
+      - --recheck
+      - "{{ item }}"
+  with_items:
+    - "{{ system_disks }}"
+  register: chroot_grub_install_uefi
+  changed_when: "chroot_grub_install_uefi.rc == 0"
+  when: ansible_virtualization_role == 'host'
+
+- name: Configure grub
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - grub-mkconfig
+      - --output=/boot/grub/grub.cfg
+  register: chroot_grub_mkconfig
+  changed_when: "chroot_grub_mkconfig.rc == 0"
