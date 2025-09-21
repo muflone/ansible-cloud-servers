@@ -3,3 +3,6 @@
 
 - name: Install packages
   include_tasks: install_packages.yml
+
+- name: Configure etckeeper
+  include_tasks: etckeeper.yml

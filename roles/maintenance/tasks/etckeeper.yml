@@ -1,0 +1,80 @@
+- name: Install needed packages
+  include_tasks: install_packages.yml
+  vars:
+    packages:
+      - etckeeper
+      - less
+
+- name: Set etckeeper source paths
+  set_fact:
+    etckeeper_src: "/etc/.git"
+
+- name: Initialize etckeeper for /etc
+  command:
+    argv:
+      - etckeeper
+      - init
+  args:
+    creates: "{{ etckeeper_src }}"
+
+- name: Check if /etc/.git exists
+  stat:
+    path: "{{ etckeeper_src }}"
+  register: etckeeper_src_dir
+
+- name: Check if /opt/etckeeper-etc.git exists
+  stat:
+    path: "{{ etckeeper_dest }}"
+  register: etckeeper_dest_dir
+
+- name: Copy etckeeper from /etc to /opt
+  copy:
+    src: "{{ etckeeper_src }}/"
+    dest: "{{ etckeeper_dest }}/"
+    remote_src: yes
+    mode: preserve
+  when:
+    - etckeeper_src_dir.stat.isdir
+  register: etckeeper_src_copied
+
+- name: Remove etckeeper from /etc
+  file:
+    path: "{{ etckeeper_src }}"
+    state: absent
+  when:
+    - etckeeper_src_copied is succeeded
+    - not etckeeper_src_dir.stat.islnk
+
+- name: Create a symlink from /etc/.git to /opt/etckeeper-etc.git
+  file:
+    src: "{{ etckeeper_dest }}"
+    dest: "{{ etckeeper_src }}"
+    state: link
+  when:
+    - etckeeper_src_copied is succeeded
+    - not etckeeper_src_dir.stat.islnk
+
+- name: Set committer user
+  git_config:
+    name: user.name
+    value: "Muflone"
+    repo: "{{ etckeeper_src }}"
+    scope: global
+
+- name: Set committer email
+  git_config:
+    name: user.email
+    value: "muflone@localhost"
+    repo: "{{ etckeeper_src }}"
+    scope: global
+
+- name: Update etckeeper for /etc
+  command:
+    argv:
+      - etckeeper
+      - commit
+      - -m
+      - "automatically commit changes in /etc"
+  register: etckeeper_cmd
+  changed_when: etckeeper_cmd.rc == 0
+  failed_when: false
