@@ -1,0 +1,8 @@
+[Unit]
+Description=Pulldocker
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory={{ pulldocker_path }}
+ExecStart={{ pulldocker_path }}/bin/pulldocker --configuration pulldocker.yaml --quiet

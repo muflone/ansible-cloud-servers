@@ -6,3 +6,4 @@
     - etckeeper
     - install_packages
     - docker
+    - pulldocker

@@ -1,2 +1,3 @@
 etckeeper_path: "/opt/etckeeper-etc.git"
 dockers_path: "/opt/docker-compose"
+pulldocker_path: "/opt/pulldocker"

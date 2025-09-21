@@ -1,0 +1,55 @@
+- name: Install needed packages
+  include_role:
+    name: install_packages
+  vars:
+    packages:
+      - python-packaging
+
+- name: Install pulldocker
+  pip:
+    name: pulldocker
+    virtualenv_command: "{{ ansible_python_interpreter }} -m venv"
+    virtualenv: "{{ pulldocker_path }}"
+
+- name: Configure pulldocker
+  copy:
+    src: pulldocker.yaml
+    dest: "{{ pulldocker_path }}/"
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Copy systemd service
+  template:
+    src: pulldocker.service.j2
+    dest: "{{ pulldocker_path }}/pulldocker.service"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Copy systemd timer
+  copy:
+    src: pulldocker.timer
+    dest: "{{ pulldocker_path }}/"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Link systemd service
+  file:
+    src: "{{ pulldocker_path }}/pulldocker.service"
+    dest: "/etc/systemd/system/pulldocker.service"
+    state: link
+
+- name: Link systemd timer
+  file:
+    src: "{{ pulldocker_path }}/pulldocker.timer"
+    dest: "/etc/systemd/system/pulldocker.timer"
+    state: link
+
+- name: Enable systemd timer
+  systemd:
+    name: pulldocker.timer
+    enabled: yes
+    state: started
+    daemon_reload: yes
