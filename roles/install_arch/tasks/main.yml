@@ -1,0 +1,431 @@
+- name: Read /etc/motd
+  ansible.builtin.command:
+    argv:
+      - cat
+      - /etc/motd
+  register: motd_contents
+  changed_when: motd_contents.stdout | length > 0
+
+- name: Check whether we're running in Hetzner rescue environment
+  ansible.builtin.fail:
+    msg: "Not running in rescue system!"
+  when:
+    - "'Hetzner Rescue' not in motd_contents.stdout"
+
+# It sources some files which sets TMPDIR=/tmp/hwc which breaks mkinitcpio
+- name: Remove problematic ~/.bashrc
+  ansible.builtin.file:
+    path: /root/.bashrc
+    state: absent
+  when: "'Hetzner Rescue' in motd_contents.stdout"
+
+- name: Create partitions (MBR)
+  ansible.builtin.command:
+    argv:
+      - sgdisk
+      - --align-end
+      - --clear
+      - --new=0:0:+1M
+      - --change-name=0:BIOS
+      - --typecode=0:ef02
+      - --new=0:0:0
+      - --change-name=0:root
+      - --typecode=0:8304
+      - "{{ item }}"
+  with_items:
+    - "{{ system_disks }}"
+  register: sgdisk
+  when: ansible_virtualization_role != 'host'
+  changed_when: "sgdisk.rc == 0"
+
+- name: Create partitions (EFI)
+  ansible.builtin.command:
+    argv:
+      - sgdisk
+      - --align-end
+      - --clear
+      - --new=0:0:+1M --change-name=0:'BIOS boot partition' --typecode=0:ef02
+      - --new=0:0:+512M --change-name=0:'EFI system partition' --typecode=0:ef00
+      - --new=0:0:0 --change-name=0:root --typecode=0:8304
+      - "{{ item }}"
+  with_items:
+    - "{{ system_disks }}"
+  register: sgdisk
+  when: ansible_virtualization_role == 'host'
+  changed_when: "sgdisk.rc == 0"
+
+- name: Store root partition number for later steps
+  ansible.builtin.set_fact:
+    root_partno: "{{ '3' if ansible_virtualization_role == 'host' else '2' }}"
+
+- name: Format the root partition
+  ansible.builtin.command:
+    argv:
+      - mkfs.ext4
+      - -L
+      - root
+      - -m
+      - 0
+      - "{{ system_disks[0] }}{{ 'p' if 'nvme' in system_disks[0] }}{{ root_partno }}"
+  changed_when: true
+
+- name: Set chroot path
+  ansible.builtin.set_fact:
+    chroot_path: "/mnt"
+
+- name: Mount the root filesystem
+  ansible.posix.mount:
+    src: "{{ system_disks[0] }}{{ 'p' if 'nvme' in system_disks[0] }}{{ root_partno }}"
+    path: "{{ chroot_path }}"
+    state: mounted
+    fstype: ext4
+  when: filesystem == "ext4"
+
+- name: Format and mount the EFI system partition
+  when: ansible_virtualization_role == 'host'
+  block:
+    - name: Format the EFI system partition
+      ansible.builtin.command:
+        argv:
+          - mkfs.fat
+          - -F
+          - 32
+          - -S
+          - 4096
+          - -n
+          - ESP
+          - "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
+      changed_when: false
+
+    - name: Create the efi mountpoint
+      ansible.builtin.file:
+        path: "{{ chroot_path }}/efi"
+        state: directory
+        mode: '0755'
+
+    - name: Mount the efi filesystem
+      ansible.posix.mount:
+        src: "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
+        path: "{{ chroot_path }}/efi"
+        state: mounted
+        fstype: vfat
+
+- name: Download bootstrap image
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: /tmp/
+    mode: "0644"
+  loop:
+    - https://geo.mirror.pkgbuild.com/iso/{{ bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst
+    - https://archlinux.org/iso/{{ bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst.sig
+
+- name: Get pierre's key
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --auto-key-locate
+      - clear,wkd
+      - --locate-external-key
+      - pierre@archlinux.org
+  register: gpg_locate
+  changed_when: "gpg_locate.rc == 0"
+
+- name: Verify bootstrap image signature
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --keyserver-options
+      - auto-key-retrieve
+      - --verify
+      - /tmp/archlinux-bootstrap-x86_64.tar.zst.sig
+      - /tmp/archlinux-bootstrap-x86_64.tar.zst
+  changed_when: false
+
+- name: Extract boostrap image
+  ansible.builtin.unarchive:
+    src: /tmp/archlinux-bootstrap-x86_64.tar.zst
+    dest: /tmp
+    remote_src: true
+    creates: /tmp/root.x86_64
+
+- name: Copy resolv.conf to bootstrap chroot
+  ansible.builtin.copy:
+    remote_src: true
+    src: /etc/resolv.conf
+    dest: /tmp/root.x86_64/etc/resolv.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Mount /proc to bootstrap chroot
+  ansible.posix.mount:
+    src: /proc
+    path: /tmp/root.x86_64/proc
+    state: mounted
+    fstype: proc
+    opts: rbind
+
+- name: Mount /sys to bootstrap chroot
+  ansible.posix.mount:
+    src: /sys
+    path: /tmp/root.x86_64/sys
+    state: mounted
+    fstype: sysfs
+    opts: rbind
+
+- name: Mount /dev to bootstrap chroot
+  ansible.posix.mount:
+    src: /dev
+    path: /tmp/root.x86_64/dev
+    state: mounted
+    fstype: udev
+    opts: rbind
+
+- name: Mount chroot to bootstrap chroot
+  ansible.posix.mount:
+    src: "{{ chroot_path }}"
+    path: /tmp/root.x86_64/mnt
+    state: mounted
+    fstype: ext4
+    opts: rbind
+  when: filesystem == "ext4"
+
+- name: Configure pacman mirror
+  ansible.builtin.template:
+    src: mirrorlist.j2
+    dest: /tmp/root.x86_64/etc/pacman.d/mirrorlist
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Initialize pacman keyring inside bootstrap chroot
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - /tmp/root.x86_64
+      - pacman-key
+      - --init
+  register: chroot_pacman_key_init
+  changed_when: "chroot_pacman_key_init.rc == 0"
+
+- name: Populate pacman keyring inside bootstrap chroot
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - /tmp/root.x86_64
+      - pacman-key
+      - --populate
+      - archlinux
+  register: chroot_pacman_key_populate
+  changed_when: "chroot_pacman_key_populate.rc == 0"
+
+- name: Install arch base from bootstrap chroot
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - /tmp/root.x86_64
+      - pacstrap
+      - "{{ chroot_path }}"
+      - base
+      - linux
+      - grub
+      - openssh
+      - pacman-contrib
+      - python3
+    creates: /tmp/root.x86_64/mnt/bin
+
+- name: Install ucode update
+  when: ansible_virtualization_role == 'host'
+  block:
+    - name: Install ucode update for Intel
+      ansible.builtin.set_fact:
+        ucode: "intel-ucode"
+      when: "'GenuineIntel' in ansible_facts['processor']"
+
+    - name: Install ucode update for AMD
+      ansible.builtin.set_fact:
+        ucode: "amd-ucode"
+      when: "'AuthenticAMD' in ansible_facts['processor']"
+
+    - name: Install ucode from bootstrap chroot
+      ansible.builtin.command:
+        argv:
+          - "{{ ucode | default('') }}"
+      changed_when: true
+
+- name: Mount /proc to new chroot
+  ansible.posix.mount:
+    src: /proc
+    path: "{{ chroot_path }}/proc"
+    state: mounted
+    fstype: proc
+    opts: rbind
+
+- name: Mount /sys to new chroot
+  ansible.posix.mount:
+    src: /sys
+    path: "{{ chroot_path }}/sys"
+    state: mounted
+    fstype: sysfs
+    opts: rbind
+
+- name: Mount /dev to new chroot
+  ansible.posix.mount:
+    src: /dev
+    path: "{{ chroot_path }}/dev"
+    state: mounted
+    fstype: udev
+    opts: rbind
+
+- name: Run systemd-firstboot
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - systemd-firstboot
+      - --locale=C.UTF-8
+      - --timezone=UTC
+      - --hostname={{ hostname }}
+  register: chroot_systemd_firstboot
+  changed_when: "chroot_systemd_firstboot.rc == 0"
+
+- name: Run mkinitcpio
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - mkinitcpio
+      - --allpresets
+  register: chroot_mkinitcpio
+  changed_when: "chroot_mkinitcpio.rc == 0"
+
+- name: Install grub (MBR)
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - grub-install
+      - --target=i386-pc
+      - --recheck
+      - "{{ item }}"
+  with_items:
+    - "{{ system_disks }}"
+  register: chroot_grub_install_legacy
+  changed_when: "chroot_grub_install_legacy.rc == 0"
+
+- name: Install grub (EFI)
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - grub-install
+      - --target=x86_64-efi
+      - --efi-directory=/efi
+      - --removable
+      - --recheck
+      - "{{ item }}"
+  with_items:
+    - "{{ system_disks }}"
+  register: chroot_grub_install_uefi
+  changed_when: "chroot_grub_install_uefi.rc == 0"
+  when: ansible_virtualization_role == 'host'
+
+- name: Configure grub
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - grub-mkconfig
+      - --output=/boot/grub/grub.cfg
+  register: chroot_grub_mkconfig
+  changed_when: "chroot_grub_mkconfig.rc == 0"
+
+- name: Setup pacman-init.service on first boot
+  ansible.builtin.copy:
+    src: pacman-init.service
+    dest: "{{ chroot_path }}/etc/systemd/system/"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Remove generated keyring in the installation process
+  ansible.builtin.file:
+    path: "{{ chroot_path }}/etc/pacman.d/gnupg"
+    state: absent
+
+- name: Make sure /etc/machine-id is absent
+  ansible.builtin.file:
+    path: "{{ chroot_path }}/etc/machine-id"
+    state: absent
+
+- name: Enable services inside chroot
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - systemctl
+      - enable
+      - pacman-init
+  register: chroot_systemd_services
+  changed_when: "chroot_systemd_services.rc == 0"
+
+- name: Configure networking
+  ansible.builtin.include_role:
+    name: chroot_networking
+
+- name: Configure SSH
+  ansible.builtin.include_role:
+    name: chroot_ssh
+
+- name: Clean pacman cache
+  ansible.builtin.command:
+    argv:
+      - chroot
+      - "{{ chroot_path }}"
+      - paccache
+      - --remove
+      - --keep
+      - 0
+  register: chroot_pacman_clean_cache
+  changed_when: "chroot_pacman_clean_cache.rc == 0"
+
+- name: Unmount devices from the chroot
+  block:
+    - name: Unmount filesystems from the chroot
+      ansible.posix.mount:
+        path: "{{ item }}"
+        state: unmounted
+      with_items:
+        - "{{ chroot_path }}/proc/sys/fs/binfmt_misc"
+        - "{{ chroot_path }}/dev/shm"
+        - "{{ chroot_path }}/dev/hugepages"
+        - "{{ chroot_path }}/dev/mqueue"
+
+    - name: Unmount others filesystems from the chroot
+      ansible.builtin.command:
+        argv:
+          - umount
+          - --lazy
+          - "{{ item }}"
+      with_items:
+        - "{{ chroot_path }}/dev"
+        - "{{ chroot_path }}/proc"
+        - "{{ chroot_path }}/sys"
+      changed_when: true
+
+    - name: Unmount /efi from the chroot
+      when: ansible_virtualization_role == 'host'
+      ansible.posix.mount:
+        path: "{{ chroot_path }}/efi"
+        state: unmounted
+
+    - name: Unmount chroot from the chroot
+      ansible.builtin.command:
+        argv:
+          - umount
+          - --lazy
+          - "{{ chroot_path }}"
+      changed_when: true
+
+- name: Reboot
+  ansible.builtin.reboot:

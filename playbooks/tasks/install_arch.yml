@@ -1,0 +1,6 @@
+- name: Install arch
+  hosts: new_servers
+  roles:
+    - install_arch
+  vars:
+    bootstrap_version: "latest"

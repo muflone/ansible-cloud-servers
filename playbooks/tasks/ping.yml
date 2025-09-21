@@ -1,0 +1,6 @@
+- name: Ping
+  hosts: cloud
+  gather_facts: no
+  roles:
+    - ping
+
