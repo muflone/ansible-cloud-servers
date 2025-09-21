@@ -1,0 +1,7 @@
+- name: Maintenance for cloud8.muflone.com
+  hosts: cloud8.muflone.com
+  gather_facts: yes
+  roles:
+    - upgrade_packages
+    - etckeeper
+    - install_packages

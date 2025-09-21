@@ -35,3 +35,7 @@
 
   Execute regular maintenance, including upgrade the installed packages and
   install extra packages on all the hosts.
+- **playbooks/tasks/cloud8.muflone.com.yml**
+
+  Execute regular maintenance for the host cloud8.muflone.com.
+
