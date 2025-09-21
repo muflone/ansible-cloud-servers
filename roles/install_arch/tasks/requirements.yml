@@ -1,0 +1,13 @@
+- name: Read /etc/motd
+  ansible.builtin.command:
+    argv:
+      - cat
+      - /etc/motd
+  register: motd_contents
+  changed_when: motd_contents.stdout | length > 0
+
+- name: Check whether we're running in Hetzner rescue environment
+  ansible.builtin.fail:
+    msg: "Not running in rescue system!"
+  when:
+    - "'Hetzner Rescue' not in motd_contents.stdout"
