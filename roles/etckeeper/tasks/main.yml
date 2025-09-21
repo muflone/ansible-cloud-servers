@@ -79,3 +79,10 @@
   register: etckeeper_cmd
   changed_when: etckeeper_cmd.rc == 0
   failed_when: false
+
+- name: Enable systemd timer
+  systemd:
+    name: etckeeper.timer
+    enabled: yes
+    state: started
+    daemon_reload: yes
