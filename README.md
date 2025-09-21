@@ -20,7 +20,7 @@
 * Ansible
 * SSH access on all the listed servers
 
-## Available Playbooks
+# Available Playbooks
 
 - **playbooks/tasks/install_arch.yml**
 
