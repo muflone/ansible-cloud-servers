@@ -1,13 +1,6 @@
 - name: Check requirements
   include_tasks: requirements.yml
 
-# It sources some files which sets TMPDIR=/tmp/hwc which breaks mkinitcpio
-- name: Remove problematic ~/.bashrc
-  ansible.builtin.file:
-    path: /root/.bashrc
-    state: absent
-  when: "'Hetzner Rescue' in motd_contents.stdout"
-
 - name: Partitioning
   include_tasks: partitioning.yml
 
