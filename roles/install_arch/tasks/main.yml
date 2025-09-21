@@ -8,55 +8,8 @@
     state: absent
   when: "'Hetzner Rescue' in motd_contents.stdout"
 
-- name: Create partitions (MBR)
-  ansible.builtin.command:
-    argv:
-      - sgdisk
-      - --align-end
-      - --clear
-      - --new=0:0:+1M
-      - --change-name=0:BIOS
-      - --typecode=0:ef02
-      - --new=0:0:0
-      - --change-name=0:root
-      - --typecode=0:8304
-      - "{{ item }}"
-  with_items:
-    - "{{ system_disks }}"
-  register: sgdisk
-  when: ansible_virtualization_role != 'host'
-  changed_when: "sgdisk.rc == 0"
-
-- name: Create partitions (EFI)
-  ansible.builtin.command:
-    argv:
-      - sgdisk
-      - --align-end
-      - --clear
-      - --new=0:0:+1M --change-name=0:'BIOS boot partition' --typecode=0:ef02
-      - --new=0:0:+512M --change-name=0:'EFI system partition' --typecode=0:ef00
-      - --new=0:0:0 --change-name=0:root --typecode=0:8304
-      - "{{ item }}"
-  with_items:
-    - "{{ system_disks }}"
-  register: sgdisk
-  when: ansible_virtualization_role == 'host'
-  changed_when: "sgdisk.rc == 0"
-
-- name: Store root partition number for later steps
-  ansible.builtin.set_fact:
-    root_partno: "{{ '3' if ansible_virtualization_role == 'host' else '2' }}"
-
-- name: Format the root partition
-  ansible.builtin.command:
-    argv:
-      - mkfs.ext4
-      - -L
-      - root
-      - -m
-      - 0
-      - "{{ system_disks[0] }}{{ 'p' if 'nvme' in system_disks[0] }}{{ root_partno }}"
-  changed_when: true
+- name: Partitioning
+  include_tasks: partitioning.yml
 
 - name: Set chroot path
   ansible.builtin.set_fact:
@@ -70,34 +23,20 @@
     fstype: ext4
   when: filesystem == "ext4"
 
-- name: Format and mount the EFI system partition
+- name: Create the efi mountpoint
+  ansible.builtin.file:
+    path: "{{ chroot_path }}/efi"
+    state: directory
+    mode: '0755'
   when: ansible_virtualization_role == 'host'
-  block:
-    - name: Format the EFI system partition
-      ansible.builtin.command:
-        argv:
-          - mkfs.fat
-          - -F
-          - 32
-          - -S
-          - 4096
-          - -n
-          - ESP
-          - "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
-      changed_when: false
 
-    - name: Create the efi mountpoint
-      ansible.builtin.file:
-        path: "{{ chroot_path }}/efi"
-        state: directory
-        mode: '0755'
-
-    - name: Mount the efi filesystem
-      ansible.posix.mount:
-        src: "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
-        path: "{{ chroot_path }}/efi"
-        state: mounted
-        fstype: vfat
+- name: Mount the efi filesystem
+  ansible.posix.mount:
+    src: "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
+    path: "{{ chroot_path }}/efi"
+    state: mounted
+    fstype: vfat
+  when: ansible_virtualization_role == 'host'
 
 - name: Download bootstrap image
   ansible.builtin.get_url:
