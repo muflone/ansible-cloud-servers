@@ -1,0 +1,22 @@
+- name: Install needed packages
+  include_role:
+    name: install_packages
+  vars:
+    packages:
+      - docker
+      - docker-compose
+
+- name: Create docker-compose root directory
+  file:
+    path: "{{ dockers_path }}"
+    owner: root
+    group: docker
+    mode: "0775"
+    state: directory
+
+- name: Start and enable docker
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+    daemon_reload: yes

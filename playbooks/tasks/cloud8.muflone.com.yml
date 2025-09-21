@@ -5,3 +5,4 @@
     - upgrade_packages
     - etckeeper
     - install_packages
+    - docker

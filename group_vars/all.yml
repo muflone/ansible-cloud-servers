@@ -1,1 +1,2 @@
 etckeeper_dest: "/opt/etckeeper-etc.git"
+dockers_path: "/opt/docker-compose"
