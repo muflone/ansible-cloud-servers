@@ -1,0 +1,70 @@
+- name: Download bootstrap image
+  ansible.builtin.get_url:
+    url: "{{ item }}"
+    dest: /tmp/
+    mode: "0644"
+  loop:
+    - https://geo.mirror.pkgbuild.com/iso/{{ bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst
+    - https://archlinux.org/iso/{{ bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst.sig
+
+- name: Get pierre's key
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --auto-key-locate
+      - clear,wkd
+      - --locate-external-key
+      - pierre@archlinux.org
+  register: gpg_locate
+  changed_when: "gpg_locate.rc == 0"
+
+- name: Verify bootstrap image signature
+  ansible.builtin.command:
+    argv:
+      - gpg
+      - --keyserver-options
+      - auto-key-retrieve
+      - --verify
+      - /tmp/archlinux-bootstrap-x86_64.tar.zst.sig
+      - /tmp/archlinux-bootstrap-x86_64.tar.zst
+  changed_when: false
+
+- name: Extract boostrap image
+  ansible.builtin.unarchive:
+    src: /tmp/archlinux-bootstrap-x86_64.tar.zst
+    dest: /tmp
+    remote_src: true
+    creates: /tmp/root.x86_64
+
+- name: Copy resolv.conf to bootstrap chroot
+  ansible.builtin.copy:
+    remote_src: true
+    src: /etc/resolv.conf
+    dest: /tmp/root.x86_64/etc/resolv.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Mount /proc to bootstrap chroot
+  ansible.posix.mount:
+    src: /proc
+    path: /tmp/root.x86_64/proc
+    state: mounted
+    fstype: proc
+    opts: rbind
+
+- name: Mount /sys to bootstrap chroot
+  ansible.posix.mount:
+    src: /sys
+    path: /tmp/root.x86_64/sys
+    state: mounted
+    fstype: sysfs
+    opts: rbind
+
+- name: Mount /dev to bootstrap chroot
+  ansible.posix.mount:
+    src: /dev
+    path: /tmp/root.x86_64/dev
+    state: mounted
+    fstype: udev
+    opts: rbind
