@@ -185,42 +185,7 @@
   changed_when: "chroot_pacman_clean_cache.rc == 0"
 
 - name: Unmount devices from the chroot
-  block:
-    - name: Unmount filesystems from the chroot
-      ansible.posix.mount:
-        path: "{{ item }}"
-        state: unmounted
-      with_items:
-        - "{{ chroot_path }}/proc/sys/fs/binfmt_misc"
-        - "{{ chroot_path }}/dev/shm"
-        - "{{ chroot_path }}/dev/hugepages"
-        - "{{ chroot_path }}/dev/mqueue"
-
-    - name: Unmount others filesystems from the chroot
-      ansible.builtin.command:
-        argv:
-          - umount
-          - --lazy
-          - "{{ item }}"
-      with_items:
-        - "{{ chroot_path }}/dev"
-        - "{{ chroot_path }}/proc"
-        - "{{ chroot_path }}/sys"
-      changed_when: true
-
-    - name: Unmount /efi from the chroot
-      when: ansible_virtualization_role == 'host'
-      ansible.posix.mount:
-        path: "{{ chroot_path }}/efi"
-        state: unmounted
-
-    - name: Unmount chroot from the chroot
-      ansible.builtin.command:
-        argv:
-          - umount
-          - --lazy
-          - "{{ chroot_path }}"
-      changed_when: true
+  include_tasks: chroot_umount.yml
 
 - name: Reboot
   ansible.builtin.reboot:
