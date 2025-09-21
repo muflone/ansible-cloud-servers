@@ -2,7 +2,7 @@ filesystem: "ext4"
 system_disks:
   - /dev/sda
 dhcp: false
-hostname: "test2"
+hostname: "test2.muflone.com"
 ipv4_address: 157.180.90.27
 ipv4_netmask: /32
 ipv4_gateway: 172.31.1.1

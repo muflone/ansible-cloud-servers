@@ -1,4 +1,4 @@
-- name: Install grub (MBR)
+- name: Install GRUB (MBR)
   ansible.builtin.command:
     argv:
       - chroot
@@ -12,7 +12,7 @@
   register: chroot_grub_install_legacy
   changed_when: "chroot_grub_install_legacy.rc == 0"
 
-- name: Install grub (EFI)
+- name: Install GRUB (EFI)
   ansible.builtin.command:
     argv:
       - chroot
@@ -29,7 +29,7 @@
   changed_when: "chroot_grub_install_uefi.rc == 0"
   when: ansible_virtualization_role == 'host'
 
-- name: Configure grub
+- name: Configure GRUB
   ansible.builtin.command:
     argv:
       - chroot

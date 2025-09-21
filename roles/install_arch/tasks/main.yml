@@ -4,7 +4,7 @@
 - name: Partitioning
   include_tasks: partitioning.yml
 
-- name: Get bootstrap ArchISO
+- name: Get Arch Linux bootstrap ISO
   include_tasks: bootstrap.yml
 
 - name: Mount devices in the chroot
@@ -39,7 +39,7 @@
   register: chroot_pacman_key_populate
   changed_when: "chroot_pacman_key_populate.rc == 0"
 
-- name: Install arch base from bootstrap chroot
+- name: Install Arch Linux base from bootstrap chroot
   ansible.builtin.command:
     argv:
       - chroot
