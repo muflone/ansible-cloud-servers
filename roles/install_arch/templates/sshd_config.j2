@@ -2,14 +2,8 @@ Port {{ ansible_port | default(22) }}
 LogLevel VERBOSE
 PasswordAuthentication no
 
-{% if 'buildservers' not in group_names %}
 AllowAgentForwarding no
 AllowTcpForwarding no
-{% else %}
-Match User root
-	AllowAgentForwarding no
-	AllowTcpForwarding no
-{% endif %}
 
 # unlink forwarded sockets; for gpg agent forwarding
 StreamLocalBindUnlink yes

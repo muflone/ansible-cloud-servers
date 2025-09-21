@@ -302,8 +302,7 @@
     name: chroot_networking
 
 - name: Configure SSH
-  ansible.builtin.include_role:
-    name: chroot_ssh
+  include_tasks: chroot_ssh.yml
 
 - name: Clean pacman cache
   ansible.builtin.command:
