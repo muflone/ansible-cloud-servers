@@ -1,5 +1,7 @@
-- name: Ping
+- name: Maintenance
   hosts: cloud
   gather_facts: yes
   roles:
-    - maintenance
+    - upgrade_packages
+    - etckeeper
+    - install_packages
