@@ -33,4 +33,4 @@
   Check if all the hosts are up and reachable from ansible.
 - **playbooks/tasks/install_packages.yml**
 
-  Upgrade and Install some packages on all the hosts.
+  Upgrade and install some packages on all the hosts.
