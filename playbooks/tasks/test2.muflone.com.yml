@@ -1,0 +1,7 @@
+- name: Maintenance for test2.muflone.com
+  hosts: test2.muflone.com
+  gather_facts: yes
+  roles:
+    - upgrade_packages
+    - etckeeper
+    - install_packages

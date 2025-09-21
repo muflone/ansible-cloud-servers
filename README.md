@@ -39,3 +39,6 @@
 
   Execute regular maintenance for the host cloud8.muflone.com.
 
+- **playbooks/tasks/test2.muflone.com.yml**
+
+  Execute regular maintenance for the host test2.muflone.com.
