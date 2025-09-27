@@ -81,8 +81,7 @@
   failed_when: false
 
 - name: Enable systemd timer
-  systemd:
+  service:
     name: etckeeper.timer
     enabled: yes
     state: started
-    daemon_reload: yes

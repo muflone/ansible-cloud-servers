@@ -48,8 +48,7 @@
     state: link
 
 - name: Enable systemd timer
-  systemd:
+  service:
     name: pulldocker.timer
     enabled: yes
     state: started
-    daemon_reload: yes

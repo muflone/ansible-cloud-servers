@@ -15,8 +15,7 @@
     state: directory
 
 - name: Start and enable docker
-  systemd:
+  service:
     name: docker
     enabled: yes
     state: started
-    daemon_reload: yes
