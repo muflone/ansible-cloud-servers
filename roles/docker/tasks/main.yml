@@ -1,4 +1,4 @@
-- name: Install needed packages
+- name: Install packages docker and docker-compose
   include_role:
     name: install_packages
   vars:

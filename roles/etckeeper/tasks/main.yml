@@ -1,4 +1,4 @@
-- name: Install needed packages
+- name: Install packages etckeeper and less
   include_role:
     name: install_packages
   vars:
