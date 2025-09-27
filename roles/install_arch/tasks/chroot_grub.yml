@@ -10,7 +10,8 @@
   with_items:
     - "{{ system_disks }}"
   register: chroot_grub_install_legacy
-  changed_when: "chroot_grub_install_legacy.rc == 0"
+  changed_when:
+    - "chroot_grub_install_legacy.rc == 0"
 
 - name: Install GRUB (EFI)
   when:
@@ -28,7 +29,8 @@
   with_items:
     - "{{ system_disks }}"
   register: chroot_grub_install_uefi
-  changed_when: "chroot_grub_install_uefi.rc == 0"
+  changed_when:
+    - "chroot_grub_install_uefi.rc == 0"
 
 - name: Configure GRUB
   ansible.builtin.command:
@@ -38,4 +40,5 @@
       - grub-mkconfig
       - --output=/boot/grub/grub.cfg
   register: chroot_grub_mkconfig
-  changed_when: "chroot_grub_mkconfig.rc == 0"
+  changed_when:
+    - "chroot_grub_mkconfig.rc == 0"

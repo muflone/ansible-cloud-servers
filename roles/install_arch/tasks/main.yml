@@ -26,7 +26,8 @@
       - pacman-key
       - --init
   register: chroot_pacman_key_init
-  changed_when: "chroot_pacman_key_init.rc == 0"
+  changed_when:
+    - "chroot_pacman_key_init.rc == 0"
 
 - name: Populate pacman keyring inside bootstrap chroot
   ansible.builtin.command:
@@ -37,7 +38,8 @@
       - --populate
       - archlinux
   register: chroot_pacman_key_populate
-  changed_when: "chroot_pacman_key_populate.rc == 0"
+  changed_when:
+    - "chroot_pacman_key_populate.rc == 0"
 
 - name: Install Arch Linux base from bootstrap chroot
   ansible.builtin.command:
@@ -69,7 +71,8 @@
       - --timezone=UTC
       - --hostname={{ hostname }}
   register: chroot_systemd_firstboot
-  changed_when: "chroot_systemd_firstboot.rc == 0"
+  changed_when:
+    - "chroot_systemd_firstboot.rc == 0"
 
 - name: Run mkinitcpio
   ansible.builtin.command:
@@ -79,7 +82,8 @@
       - mkinitcpio
       - --allpresets
   register: chroot_mkinitcpio
-  changed_when: "chroot_mkinitcpio.rc == 0"
+  changed_when:
+    - "chroot_mkinitcpio.rc == 0"
 
 - name: Setup pacman-init.service on first boot
   ansible.builtin.copy:
@@ -108,7 +112,8 @@
       - enable
       - pacman-init
   register: chroot_systemd_services
-  changed_when: "chroot_systemd_services.rc == 0"
+  changed_when:
+    - "chroot_systemd_services.rc == 0"
 
 - name: Configure networking
   include_tasks: chroot_networking.yml
@@ -126,7 +131,8 @@
       - --keep
       - 0
   register: chroot_pacman_clean_cache
-  changed_when: "chroot_pacman_clean_cache.rc == 0"
+  changed_when:
+    - "chroot_pacman_clean_cache.rc == 0"
 
 - name: Setup GRUB
   include_tasks: chroot_grub.yml

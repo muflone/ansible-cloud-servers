@@ -16,7 +16,8 @@
       - --locate-external-key
       - pierre@archlinux.org
   register: gpg_locate
-  changed_when: "gpg_locate.rc == 0"
+  changed_when:
+    - "gpg_locate.rc == 0"
 
 - name: Verify Arch Linux bootstrap image signature
   ansible.builtin.command:
@@ -27,7 +28,8 @@
       - --verify
       - /tmp/archlinux-bootstrap-x86_64.tar.zst.sig
       - /tmp/archlinux-bootstrap-x86_64.tar.zst
-  changed_when: false
+  changed_when:
+    - false
 
 - name: Extract Arch Linux boostrap image
   ansible.builtin.unarchive:

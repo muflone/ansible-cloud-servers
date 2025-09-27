@@ -16,7 +16,8 @@
   with_items:
     - "{{ system_disks }}"
   register: sgdisk
-  changed_when: "sgdisk.rc == 0"
+  changed_when:
+    - "sgdisk.rc == 0"
 
 - name: Create partitions (EFI)
   when:
@@ -33,7 +34,8 @@
   with_items:
     - "{{ system_disks }}"
   register: sgdisk
-  changed_when: "sgdisk.rc == 0"
+  changed_when:
+    - "sgdisk.rc == 0"
 
 - name: Store root partition number for later steps
   ansible.builtin.set_fact:
@@ -48,7 +50,8 @@
       - -m
       - 0
       - "{{ system_disks[0] }}{{ 'p' if 'nvme' in system_disks[0] }}{{ root_partno }}"
-  changed_when: true
+  changed_when:
+    - true
 
 - name: Format the EFI system partition
   when:
@@ -63,4 +66,5 @@
       - -n
       - ESP
       - "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
-  changed_when: false
+  changed_when:
+    - false
