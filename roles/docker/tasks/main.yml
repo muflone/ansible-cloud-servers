@@ -7,7 +7,7 @@
       - docker-compose
 
 - name: Create docker-compose root directory
-  file:
+  ansible.builtin.file:
     path: "{{ dockers_path }}"
     owner: root
     group: docker
@@ -15,7 +15,7 @@
     state: directory
 
 - name: Start and enable docker
-  service:
+  ansible.builtin.service:
     name: docker
     enabled: yes
     state: started

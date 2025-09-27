@@ -7,11 +7,11 @@
       - less
 
 - name: Set etckeeper source paths
-  set_fact:
+  ansible.builtin.set_fact:
     etckeeper_src: "/etc/.git"
 
 - name: Initialize etckeeper for /etc
-  command:
+  ansible.builtin.command:
     argv:
       - etckeeper
       - init
@@ -19,19 +19,19 @@
     creates: "{{ etckeeper_src }}"
 
 - name: Check if /etc/.git exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ etckeeper_src }}"
   register: etckeeper_src_dir
 
 - name: Check if /opt/etckeeper-etc.git exists
-  stat:
+  ansible.builtin.stat:
     path: "{{ etckeeper_path }}"
   register: etckeeper_path_dir
 
 - name: Copy etckeeper from /etc to /opt
   when:
     - etckeeper_src_dir.stat.isdir
-  copy:
+  ansible.builtin.copy:
     src: "{{ etckeeper_src }}/"
     dest: "{{ etckeeper_path }}/"
     remote_src: yes
@@ -42,7 +42,7 @@
   when:
     - etckeeper_src_copied is succeeded
     - not etckeeper_src_dir.stat.islnk
-  file:
+  ansible.builtin.file:
     path: "{{ etckeeper_src }}"
     state: absent
 
@@ -50,27 +50,27 @@
   when:
     - etckeeper_src_copied is succeeded
     - not etckeeper_src_dir.stat.islnk
-  file:
+  ansible.builtin.file:
     src: "{{ etckeeper_path }}"
     dest: "{{ etckeeper_src }}"
     state: link
 
 - name: Set committer user
-  git_config:
+  community.general.git_config:
     name: user.name
     value: "Muflone"
     repo: "{{ etckeeper_src }}"
     scope: global
 
 - name: Set committer email
-  git_config:
+  community.general.git_config:
     name: user.email
     value: "muflone@localhost"
     repo: "{{ etckeeper_src }}"
     scope: global
 
 - name: Update etckeeper for /etc
-  command:
+  ansible.builtin.command:
     argv:
       - etckeeper
       - commit
@@ -81,7 +81,7 @@
   failed_when: false
 
 - name: Enable systemd timer
-  service:
+  ansible.builtin.service:
     name: etckeeper.timer
     enabled: yes
     state: started

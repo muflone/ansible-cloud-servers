@@ -3,7 +3,7 @@
     - not dhcp | default(false)
   block:
     - name: Install 10-static-ethernet.network
-      template:
+      ansible.builtin.template:
         src: 10-static-ethernet.network.j2
         dest: "{{ chroot_path }}/etc/systemd/network/10-static-ethernet.network"
         owner: root
@@ -13,7 +13,7 @@
         - Restart networkd
 
     - name: Create drop-in directory for 10-static-ethernet.network
-      file:
+      ansible.builtin.file:
         path: "{{ chroot_path }}/etc/systemd/network/10-static-ethernet.network.d"
         state: directory
         owner: root
@@ -23,7 +23,7 @@
     - name: Configure static dns (static)
       when:
         - static_dns | default(true)
-      copy:
+      ansible.builtin.copy:
         src: dns.conf
         dest: "{{ chroot_path }}/etc/systemd/network/10-static-ethernet.network.d/dns.conf"
         owner: root
@@ -37,7 +37,7 @@
     - dhcp | default(false)
   block:
     - name: Install 10-dhcp-ethernet.network
-      template:
+      ansible.builtin.template:
         src: 10-dhcp-ethernet.network.j2
         dest: "{{ chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network"
         owner: root
@@ -47,7 +47,7 @@
         - Restart networkd
 
     - name: Create drop-in directory for 10-dhcp-ethernet.network
-      file:
+      ansible.builtin.file:
         path: "{{ chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network.d"
         state: directory
         owner: root
@@ -57,7 +57,7 @@
     - name: Configure static dns (dhcp)
       when:
         - static_dns | default(false)
-      copy:
+      ansible.builtin.copy:
         src: dns.conf
         dest: "{{ chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network.d/dns.conf"
         owner: root
@@ -69,7 +69,7 @@
 - name: Configure additional network addresses
   when:
     - additional_addresses is defined
-  template:
+  ansible.builtin.template:
     src: additional_addresses.conf.j2
     dest: >
       {{ chroot_path }}/etc/systemd/network/
@@ -82,7 +82,7 @@
     - Restart networkd
 
 - name: Create symlink to resolv.conf
-  file:
+  ansible.builtin.file:
     src: /run/systemd/resolve/stub-resolv.conf
     dest: "{{ chroot_path }}/etc/resolv.conf"
     state: link
@@ -92,7 +92,7 @@
     group: root
 
 - name: Enable systemd-network services inside chroot
-  command:
+  ansible.builtin.command:
     argv:
       - chroot
       - "{{ chroot_path }}"

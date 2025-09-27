@@ -1,11 +1,11 @@
 - name: Set chroot path
-  set_fact:
+  ansible.builtin.set_fact:
     chroot_path: "/mnt"
 
 - name: Mount the root filesystem
   when:
     - filesystem == "ext4"
-  mount:
+  ansible.posix.mount:
     src: "{{ system_disks[0] }}{{ 'p' if 'nvme' in system_disks[0] }}{{ root_partno }}"
     path: "{{ chroot_path }}"
     state: mounted
@@ -14,7 +14,7 @@
 - name: Create the efi mountpoint
   when:
     - ansible_virtualization_role == 'host'
-  file:
+  ansible.builtin.file:
     path: "{{ chroot_path }}/efi"
     state: directory
     mode: '0755'
@@ -22,7 +22,7 @@
 - name: Mount the efi filesystem
   when:
     - ansible_virtualization_role == 'host'
-  mount:
+  ansible.posix.mount:
     src: "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
     path: "{{ chroot_path }}/efi"
     state: mounted
@@ -31,7 +31,7 @@
 - name: Mount chroot to bootstrap chroot
   when:
     - filesystem == "ext4"
-  mount:
+  ansible.posix.mount:
     src: "{{ chroot_path }}"
     path: /tmp/root.x86_64/mnt
     state: mounted
@@ -39,7 +39,7 @@
     opts: rbind
 
 - name: Mount /proc to new chroot
-  mount:
+  ansible.posix.mount:
     src: /proc
     path: "{{ chroot_path }}/proc"
     state: mounted
@@ -47,7 +47,7 @@
     opts: rbind
 
 - name: Mount /sys to new chroot
-  mount:
+  ansible.posix.mount:
     src: /sys
     path: "{{ chroot_path }}/sys"
     state: mounted
@@ -55,7 +55,7 @@
     opts: rbind
 
 - name: Mount /dev to new chroot
-  mount:
+  ansible.posix.mount:
     src: /dev
     path: "{{ chroot_path }}/dev"
     state: mounted

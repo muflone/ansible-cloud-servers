@@ -1,7 +1,7 @@
 - name: Unmount filesystems from the chroot
   when:
     - false
-  mount:
+  ansible.posix.mount:
     path: "{{ item }}"
     state: unmounted
   with_items:
@@ -11,7 +11,7 @@
     - "{{ chroot_path }}/dev/mqueue"
 
 - name: Unmount others filesystems from the chroot
-  command:
+  ansible.builtin.command:
     argv:
       - umount
       - --lazy
@@ -25,12 +25,12 @@
 - name: Unmount /efi from the chroot
   when:
     - ansible_virtualization_role == 'host'
-  mount:
+  ansible.posix.mount:
     path: "{{ chroot_path }}/efi"
     state: unmounted
 
 - name: Unmount chroot from the chroot
-  command:
+  ansible.builtin.command:
     argv:
       - umount
       - --lazy

@@ -11,7 +11,7 @@
   include_tasks: chroot_mount.yml
 
 - name: Configure pacman mirror
-  template:
+  ansible.builtin.template:
     src: mirrorlist.j2
     dest: /tmp/root.x86_64/etc/pacman.d/mirrorlist
     owner: root
@@ -19,7 +19,7 @@
     mode: "0644"
 
 - name: Initialize pacman keyring inside bootstrap chroot
-  command:
+  ansible.builtin.command:
     argv:
       - chroot
       - /tmp/root.x86_64
@@ -29,7 +29,7 @@
   changed_when: "chroot_pacman_key_init.rc == 0"
 
 - name: Populate pacman keyring inside bootstrap chroot
-  command:
+  ansible.builtin.command:
     argv:
       - chroot
       - /tmp/root.x86_64
@@ -40,7 +40,7 @@
   changed_when: "chroot_pacman_key_populate.rc == 0"
 
 - name: Install Arch Linux base from bootstrap chroot
-  command:
+  ansible.builtin.command:
     argv:
       - chroot
       - /tmp/root.x86_64
@@ -60,7 +60,7 @@
   include_tasks: ucode.yaml
 
 - name: Run systemd-firstboot
-  command:
+  ansible.builtin.command:
     argv:
       - chroot
       - "{{ chroot_path }}"
@@ -72,7 +72,7 @@
   changed_when: "chroot_systemd_firstboot.rc == 0"
 
 - name: Run mkinitcpio
-  command:
+  ansible.builtin.command:
     argv:
       - chroot
       - "{{ chroot_path }}"
@@ -82,7 +82,7 @@
   changed_when: "chroot_mkinitcpio.rc == 0"
 
 - name: Setup pacman-init.service on first boot
-  copy:
+  ansible.builtin.copy:
     src: pacman-init.service
     dest: "{{ chroot_path }}/etc/systemd/system/"
     owner: root
@@ -90,17 +90,17 @@
     mode: "0644"
 
 - name: Remove generated keyring in the installation process
-  file:
+  ansible.builtin.file:
     path: "{{ chroot_path }}/etc/pacman.d/gnupg"
     state: absent
 
 - name: Make sure /etc/machine-id is absent
-  file:
+  ansible.builtin.file:
     path: "{{ chroot_path }}/etc/machine-id"
     state: absent
 
 - name: Enable services inside chroot
-  command:
+  ansible.builtin.command:
     argv:
       - chroot
       - "{{ chroot_path }}"
@@ -117,7 +117,7 @@
   include_tasks: chroot_ssh.yml
 
 - name: Clean pacman cache
-  command:
+  ansible.builtin.command:
     argv:
       - chroot
       - "{{ chroot_path }}"
@@ -135,4 +135,4 @@
   include_tasks: chroot_umount.yml
 
 - name: Reboot
-  reboot:
+  ansible.builtin.reboot:

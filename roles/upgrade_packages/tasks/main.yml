@@ -1,7 +1,7 @@
 - name: Ensure latest keyring (Arch Linux)
   when:
     - ansible_os_family == 'Archlinux'
-  pacman:
+  community.general.pacman:
     name: archlinux-keyring
     state: latest
     update_cache: yes
@@ -9,13 +9,13 @@
 - name: Upgrade system (Arch Linux)
   when:
     - ansible_os_family == 'Archlinux'
-  pacman:
+  community.general.pacman:
     update_cache: true
     upgrade: true
 
 - name: Upgrade system (Debian / Ubuntu)
   when:
     - ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
-  apt:
+  ansible.builtin.apt:
     update_cache: true
     upgrade: true

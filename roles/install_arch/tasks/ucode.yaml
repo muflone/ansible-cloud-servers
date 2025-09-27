@@ -1,17 +1,17 @@
 - name: Install ucode update for Intel
   when:
     - "'GenuineIntel' in ansible_facts['processor']"
-  set_fact:
+  ansible.builtin.set_fact:
     ucode: "intel-ucode"
 
 - name: Install ucode update for AMD
   when:
     - "'AuthenticAMD' in ansible_facts['processor']"
-  set_fact:
+  ansible.builtin.set_fact:
     ucode: "amd-ucode"
 
 - name: Install ucode from bootstrap chroot
-  command:
+  ansible.builtin.command:
     argv:
       - "{{ ucode | default('') }}"
   changed_when: true

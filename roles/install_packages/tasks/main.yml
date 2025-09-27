@@ -2,7 +2,7 @@
   when:
     - ansible_os_family == 'Archlinux'
     - packages is defined
-  pacman:
+  community.general.pacman:
     name: "{{ packages }}"
     state: present
 
@@ -10,6 +10,6 @@
   when:
     - packages is defined
     - ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
-  apt:
+  ansible.builtin.apt:
     name: "{{ packages }}"
     state: present
