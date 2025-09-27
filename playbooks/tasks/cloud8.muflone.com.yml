@@ -3,7 +3,11 @@
   gather_facts: yes
   roles:
     - role: upgrade_packages
+
     - role: etckeeper
+
     - role: install_packages
+
     - role: docker
+
     - role: pulldocker
