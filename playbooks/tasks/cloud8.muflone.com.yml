@@ -2,8 +2,8 @@
   hosts: cloud8.muflone.com
   gather_facts: yes
   roles:
-    - upgrade_packages
-    - etckeeper
-    - install_packages
-    - docker
-    - pulldocker
+    - role: upgrade_packages
+    - role: etckeeper
+    - role: install_packages
+    - role: docker
+    - role: pulldocker

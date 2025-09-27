@@ -2,6 +2,6 @@
   hosts: cloud
   gather_facts: yes
   roles:
-    - upgrade_packages
-    - etckeeper
-    - install_packages
+    - role: upgrade_packages
+    - role: etckeeper
+    - role: install_packages

@@ -2,4 +2,4 @@
   hosts: cloud
   gather_facts: no
   roles:
-    - ping
+    - role: ping
