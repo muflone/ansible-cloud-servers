@@ -1,4 +1,6 @@
 - name: Unmount filesystems from the chroot
+  when:
+    - false
   mount:
     path: "{{ item }}"
     state: unmounted
@@ -7,8 +9,6 @@
     - "{{ chroot_path }}/dev/shm"
     - "{{ chroot_path }}/dev/hugepages"
     - "{{ chroot_path }}/dev/mqueue"
-  when:
-    - false
 
 - name: Unmount others filesystems from the chroot
   command:
@@ -23,10 +23,11 @@
   changed_when: true
 
 - name: Unmount /efi from the chroot
+  when:
+    - ansible_virtualization_role == 'host'
   mount:
     path: "{{ chroot_path }}/efi"
     state: unmounted
-  when: ansible_virtualization_role == 'host'
 
 - name: Unmount chroot from the chroot
   command:

@@ -29,31 +29,31 @@
   register: etckeeper_path_dir
 
 - name: Copy etckeeper from /etc to /opt
+  when:
+    - etckeeper_src_dir.stat.isdir
   copy:
     src: "{{ etckeeper_src }}/"
     dest: "{{ etckeeper_path }}/"
     remote_src: yes
     mode: preserve
-  when:
-    - etckeeper_src_dir.stat.isdir
   register: etckeeper_src_copied
 
 - name: Remove etckeeper from /etc
-  file:
-    path: "{{ etckeeper_src }}"
-    state: absent
   when:
     - etckeeper_src_copied is succeeded
     - not etckeeper_src_dir.stat.islnk
+  file:
+    path: "{{ etckeeper_src }}"
+    state: absent
 
 - name: Create a symlink from /etc/.git to /opt/etckeeper-etc.git
+  when:
+    - etckeeper_src_copied is succeeded
+    - not etckeeper_src_dir.stat.islnk
   file:
     src: "{{ etckeeper_path }}"
     dest: "{{ etckeeper_src }}"
     state: link
-  when:
-    - etckeeper_src_copied is succeeded
-    - not etckeeper_src_dir.stat.islnk
 
 - name: Set committer user
   git_config:

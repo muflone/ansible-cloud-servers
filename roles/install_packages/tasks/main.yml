@@ -1,15 +1,15 @@
 - name: Install packages (Arch Linux)
-  pacman:
-    name: "{{ packages }}"
-    state: present
   when:
     - ansible_os_family == 'Archlinux'
     - packages is defined
-
-- name: Install packages (Debian / Ubuntu)
-  apt:
+  pacman:
     name: "{{ packages }}"
     state: present
+
+- name: Install packages (Debian / Ubuntu)
   when:
     - packages is defined
     - ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
+  apt:
+    name: "{{ packages }}"
+    state: present

@@ -7,15 +7,15 @@
   changed_when: motd_contents.stdout | length > 0
 
 - name: Check whether we're running in Hetzner rescue environment
-  fail:
-    msg: "Not running in rescue system!"
   when:
     - "'Hetzner Rescue' not in motd_contents.stdout"
+  fail:
+    msg: "Not running in rescue system!"
 
 # It sources some files which sets TMPDIR=/tmp/hwc which breaks mkinitcpio
 - name: Remove problematic ~/.bashrc
+  when:
+    - "'Hetzner Rescue' in motd_contents.stdout"
   file:
     path: /root/.bashrc
     state: absent
-  when:
-    - "'Hetzner Rescue' in motd_contents.stdout"

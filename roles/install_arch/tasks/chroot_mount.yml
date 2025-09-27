@@ -3,40 +3,40 @@
     chroot_path: "/mnt"
 
 - name: Mount the root filesystem
+  when:
+    - filesystem == "ext4"
   mount:
     src: "{{ system_disks[0] }}{{ 'p' if 'nvme' in system_disks[0] }}{{ root_partno }}"
     path: "{{ chroot_path }}"
     state: mounted
     fstype: ext4
-  when:
-    - filesystem == "ext4"
 
 - name: Create the efi mountpoint
+  when:
+    - ansible_virtualization_role == 'host'
   file:
     path: "{{ chroot_path }}/efi"
     state: directory
     mode: '0755'
-  when:
-    - ansible_virtualization_role == 'host'
 
 - name: Mount the efi filesystem
+  when:
+    - ansible_virtualization_role == 'host'
   mount:
     src: "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
     path: "{{ chroot_path }}/efi"
     state: mounted
     fstype: vfat
-  when:
-    - ansible_virtualization_role == 'host'
 
 - name: Mount chroot to bootstrap chroot
+  when:
+    - filesystem == "ext4"
   mount:
     src: "{{ chroot_path }}"
     path: /tmp/root.x86_64/mnt
     state: mounted
     fstype: ext4
     opts: rbind
-  when:
-    - filesystem == "ext4"
 
 - name: Mount /proc to new chroot
   mount:

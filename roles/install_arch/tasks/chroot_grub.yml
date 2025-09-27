@@ -13,6 +13,8 @@
   changed_when: "chroot_grub_install_legacy.rc == 0"
 
 - name: Install GRUB (EFI)
+  when:
+    - ansible_virtualization_role == 'host'
   command:
     argv:
       - chroot
@@ -27,8 +29,6 @@
     - "{{ system_disks }}"
   register: chroot_grub_install_uefi
   changed_when: "chroot_grub_install_uefi.rc == 0"
-  when:
-    - ansible_virtualization_role == 'host'
 
 - name: Configure GRUB
   command:

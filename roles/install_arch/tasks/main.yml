@@ -55,9 +55,9 @@
     creates: /tmp/root.x86_64/mnt/bin
 
 - name: Install ucode update
-  include_tasks: ucode.yaml
   when:
     - ansible_virtualization_role == 'host'
+  include_tasks: ucode.yaml
 
 - name: Run systemd-firstboot
   command:
