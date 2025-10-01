@@ -1,5 +1,5 @@
 - name: Maintenance
-  hosts: cloud
+  hosts: cloud:!disabled
   gather_facts: yes
   roles:
     - role: upgrade_packages
