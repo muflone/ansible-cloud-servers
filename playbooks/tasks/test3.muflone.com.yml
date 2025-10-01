@@ -1,0 +1,13 @@
+- name: Maintenance for test3.muflone.com
+  hosts: test3.muflone.com
+  gather_facts: yes
+  roles:
+    - role: upgrade_packages
+
+    - role: etckeeper
+
+    - role: install_packages
+
+    - role: docker
+
+    - role: pulldocker
