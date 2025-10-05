@@ -2,11 +2,13 @@ new_servers:
   hosts:
     new_server_1:
       ansible_host: test2.muflone.com
+      ansible_port: 22
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
       ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
     new_server_2:
       ansible_host: cloud8.muflone.com
+      ansible_port: 22
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
       ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
@@ -20,11 +22,13 @@ cloud:
       ansible_become: true
     cloud8:
       ansible_host: cloud8.muflone.com
+      ansible_port: 30122
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
       ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
     test2:
       ansible_host: test2.muflone.com
+      ansible_port: 31241
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
       ansible_ssh_common_args: "-o StrictHostKeyChecking=no"

@@ -9,3 +9,4 @@ ipv4_gateway: 172.31.1.1
 dns_servers:
   - 8.8.8.8
   - 8.8.4.4
+sshd_port: 30122
