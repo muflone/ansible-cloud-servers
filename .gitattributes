@@ -1,0 +1,1 @@
+host_vars/cloud8.yml filter=git-crypt diff=git-crypt
