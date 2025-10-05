@@ -26,3 +26,7 @@
     name: docker
     enabled: true
     state: started
+
+- name: Create a network
+  community.docker.docker_network:
+    name: web
