@@ -12,4 +12,4 @@
     - role: docker
 
     - role: pulldocker
-      pulldocker_path: "{{ base_path }}/cloud8-pulldocker"
+      pulldocker_path: "{{ base_path }}/pulldocker"

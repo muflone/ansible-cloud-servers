@@ -14,7 +14,7 @@
 - name: Configure pulldocker
   ansible.builtin.copy:
     src: pulldocker.yaml
-    dest: "{{ pulldocker_path }}/pulldocker/"
+    dest: "{{ pulldocker_path }}"
     owner: root
     group: root
     mode: "0600"
@@ -22,7 +22,7 @@
 - name: Copy systemd service
   ansible.builtin.template:
     src: pulldocker.service.j2
-    dest: "{{ pulldocker_path }}/pulldocker/pulldocker.service"
+    dest: "{{ pulldocker_path }}/pulldocker.service"
     owner: root
     group: root
     mode: "0644"
@@ -30,20 +30,20 @@
 - name: Copy systemd timer
   ansible.builtin.copy:
     src: pulldocker.timer
-    dest: "{{ pulldocker_path }}/pulldocker/"
+    dest: "{{ pulldocker_path }}"
     owner: root
     group: root
     mode: "0644"
 
 - name: Link systemd service
   ansible.builtin.file:
-    src: "{{ pulldocker_path }}/pulldocker/pulldocker.service"
+    src: "{{ pulldocker_path }}/pulldocker.service"
     dest: "/etc/systemd/system/pulldocker.service"
     state: link
 
 - name: Link systemd timer
   ansible.builtin.file:
-    src: "{{ pulldocker_path }}/pulldocker/pulldocker.timer"
+    src: "{{ pulldocker_path }}/pulldocker.timer"
     dest: "/etc/systemd/system/pulldocker.timer"
     state: link
 
