@@ -13,17 +13,17 @@ new_servers:
 
 cloud:
   hosts:
-    cloud7.muflone.com:
+    cloud7:
       ansible_host: cloud7.muflone.com
       ansible_user: ubuntu
       ansible_python_interpreter: /usr/bin/python3
       ansible_become: true
-    cloud8.muflone.com:
+    cloud8:
       ansible_host: cloud8.muflone.com
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
       ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
-    test2.muflone.com:
+    test2:
       ansible_host: test2.muflone.com
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
@@ -31,4 +31,4 @@ cloud:
 
 disabled:
   hosts:
-    cloud7.muflone.com
+    cloud7
