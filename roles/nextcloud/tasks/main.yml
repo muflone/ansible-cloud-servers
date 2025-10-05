@@ -1,0 +1,2 @@
+- name: Setup nextcloud_backup
+  ansible.builtin.include_tasks: nextcloud_backup.yml

@@ -1,0 +1,18 @@
+- name: Create nextcloud_backup directory
+  ansible.builtin.file:
+    path: "~/nextcloud_backup"
+    owner: root
+    group: root
+    mode: "0770"
+    state: directory
+
+- name: Install nextcloud_backup.sh
+  when:
+    - nextcloud_mysql_user is defined
+    - nextcloud_mysql_password is defined
+  ansible.builtin.template:
+    src: nextcloud_backup.sh.j2
+    dest: "~/nextcloud_backup/nextcloud_backup.sh"
+    owner: root
+    group: root
+    mode: "0700"

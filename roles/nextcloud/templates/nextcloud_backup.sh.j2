@@ -1,0 +1,62 @@
+#!/bin/sh
+
+function usage() {
+  echo "Usage: $0 <clean|main|apps|config|data|sql|checksum>"
+  exit 1
+}
+
+if [ $# -eq 0 ]
+then
+  usage
+fi
+
+DEST_DIR="/root/nextcloud_backup"
+DOCKER_DIR="{{ nextcloud_path }}"
+
+while [ $# -gt 0 ]
+do
+  ARGUMENT="$1"
+  case "${ARGUMENT}" in
+    clean)
+      echo "Clean docker trashes"
+      docker exec -u 33 -it nextcloud php occ versions:cleanup
+      docker exec -u 33 -it nextcloud php occ trashbin:cleanup --all-users
+      rm -rf "${DOCKER_DIR}/user-data/ownbackup"
+      ;;
+    main)
+      echo "Backup docker main application"
+      tar -czf "${DEST_DIR}/nextcloud_main.tar.gz" -C "${DOCKER_DIR}" "main"
+      ;;
+    apps)
+      echo "Backup docker apps"
+      tar -czf "${DEST_DIR}/nextcloud_apps.tar.gz" -C "${DOCKER_DIR}" "apps2"
+      ;;
+    config)
+      echo "Backup docker configuration (PHP, MySQL, nginx)"
+      tar -czf "${DEST_DIR}/nextcloud_config.tar.gz" -C "${DOCKER_DIR}" "config"
+      ;;
+    data)
+      echo "Backup docker data"
+      tar -czf "${DEST_DIR}/nextcloud_data.tar.gz" -C "${DOCKER_DIR}" "data"
+      ;;
+    sql)
+      echo "Backup docker SQL"
+      docker exec -it mariadb mysqldump -u "{{ cloud8_mysql_user }}" --password="{{ nextcloud_mysql_password }}" nextcloud | gzip -9 > "${DEST_DIR}/nextcloud_sql.sql.gz"
+      ;;
+    checksum)
+      echo "Generating checksums"
+      pushd "${DEST_DIR}"
+      > "nextcloud_checksums"
+      sha256sum "nextcloud_apps.tar.gz" >> "nextcloud_checksums"
+      sha256sum "nextcloud_config.tar.gz" >> "nextcloud_checksums"
+      sha256sum "nextcloud_data.tar.gz" >> "nextcloud_checksums"
+      sha256sum "nextcloud_main.tar.gz" >> "nextcloud_checksums"
+      sha256sum "nextcloud_sql.sql.gz" >> "nextcloud_checksums"
+      popd
+      ;;
+    *)
+      usage
+      ;;
+  esac
+  shift
+done

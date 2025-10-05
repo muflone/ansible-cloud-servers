@@ -59,3 +59,8 @@
       git_repo_git_repository: "https://github.com/muflone/docker-cloud-yourls"
       git_repo_git_crypt: "{{ cloud8_yourls_git_crypt }}"
       git_repo_git_crypt_sentinel: "app.env"
+
+    - role: nextcloud
+      nextcloud_mysql_user: "{{ cloud8_mysql_user }}"
+      nextcloud_mysql_password: "{{ cloud8_mysql_password }}"
+      nextcloud_path: "{{ dockers_path }}/cloud8-nextcloud"
