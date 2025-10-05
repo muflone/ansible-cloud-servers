@@ -11,7 +11,14 @@
     virtualenv_command: "{{ ansible_python_interpreter }} -m venv"
     virtualenv: "{{ pulldocker_path }}/venv"
 
+- name: Check if pulldocker.yaml exists
+  ansible.builtin.stat:
+    path: "{{ pulldocker_path }}/pulldocker.yaml"
+  register: pulldocker_yaml_file
+
 - name: Configure pulldocker
+  when:
+    - not pulldocker_yaml_file.stat.exists
   ansible.builtin.copy:
     src: pulldocker.yaml
     dest: "{{ pulldocker_path }}"
