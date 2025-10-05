@@ -1,2 +1,20 @@
 - name: Setup nextcloud_backup
   ansible.builtin.include_tasks: nextcloud_backup.yml
+
+- name: Link systemd service
+  ansible.builtin.file:
+    src: "{{ nextcloud_path }}/systemd/docker-nextcloud-cron.service"
+    dest: "/etc/systemd/system/docker-nextcloud-cron.service"
+    state: link
+
+- name: Link systemd timer
+  ansible.builtin.file:
+    src: "{{ nextcloud_path }}/systemd/docker-nextcloud-cron.timer"
+    dest: "/etc/systemd/system/docker-nextcloud-cron.timer"
+    state: link
+
+- name: Enable systemd timer
+  ansible.builtin.service:
+    name: docker-nextcloud-cron.timer
+    enabled: true
+    state: started
