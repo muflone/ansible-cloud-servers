@@ -5,4 +5,4 @@ Description=Pulldocker
 Type=oneshot
 User=root
 WorkingDirectory={{ pulldocker_path }}
-ExecStart={{ pulldocker_path }}/bin/pulldocker --configuration pulldocker.yaml --quiet
+ExecStart={{ pulldocker_path }}/venv/bin/pulldocker --configuration pulldocker.yaml --quiet

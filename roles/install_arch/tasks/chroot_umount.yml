@@ -5,10 +5,10 @@
     path: "{{ item }}"
     state: unmounted
   with_items:
-    - "{{ chroot_path }}/proc/sys/fs/binfmt_misc"
-    - "{{ chroot_path }}/dev/shm"
-    - "{{ chroot_path }}/dev/hugepages"
-    - "{{ chroot_path }}/dev/mqueue"
+    - "{{ install_arch_chroot_path }}/proc/sys/fs/binfmt_misc"
+    - "{{ install_arch_chroot_path }}/dev/shm"
+    - "{{ install_arch_chroot_path }}/dev/hugepages"
+    - "{{ install_arch_chroot_path }}/dev/mqueue"
 
 - name: Unmount others filesystems from the chroot
   ansible.builtin.command:
@@ -17,9 +17,9 @@
       - --lazy
       - "{{ item }}"
   with_items:
-    - "{{ chroot_path }}/dev"
-    - "{{ chroot_path }}/proc"
-    - "{{ chroot_path }}/sys"
+    - "{{ install_arch_chroot_path }}/dev"
+    - "{{ install_arch_chroot_path }}/proc"
+    - "{{ install_arch_chroot_path }}/sys"
   changed_when:
     - true
 
@@ -27,7 +27,7 @@
   when:
     - ansible_virtualization_role == 'host'
   ansible.posix.mount:
-    path: "{{ chroot_path }}/efi"
+    path: "{{ install_arch_chroot_path }}/efi"
     state: unmounted
 
 - name: Unmount chroot from the chroot
@@ -35,6 +35,6 @@
     argv:
       - umount
       - --lazy
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
   changed_when:
     - true

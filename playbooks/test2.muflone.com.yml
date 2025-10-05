@@ -1,9 +1,10 @@
 - name: Maintenance for test2.muflone.com
   hosts: test2.muflone.com
-  gather_facts: yes
+  gather_facts: true
   roles:
     - role: upgrade_packages
 
     - role: etckeeper
 
     - role: install_packages
+      install_packages_packages: "{{ packages }}"

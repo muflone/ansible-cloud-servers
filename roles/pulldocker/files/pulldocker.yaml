@@ -19,4 +19,3 @@ AFTER:
 END:
   - printf '${DATE} ${TIME} %-15s END    %-4d ${COMMIT_HASH} ${COMMIT_DATE} ${COMMIT_TIME} > ${COMMIT_SUMMARY}\n' '${NAME}' '${COMMITS_COUNT}'
 ---
-

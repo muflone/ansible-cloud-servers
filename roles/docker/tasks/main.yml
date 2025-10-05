@@ -1,10 +1,11 @@
 - name: Install packages docker and docker-compose
-  include_role:
+  ansible.builtin.include_role:
     name: install_packages
   vars:
-    packages:
+    install_packages_packages:
       - docker
       - docker-compose
+      - python-requests
 
 - name: Create docker-compose root directory
   ansible.builtin.file:
@@ -23,5 +24,5 @@
 - name: Start and enable docker
   ansible.builtin.service:
     name: docker
-    enabled: yes
+    enabled: true
     state: started

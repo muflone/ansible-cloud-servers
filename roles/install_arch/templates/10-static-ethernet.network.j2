@@ -1,5 +1,5 @@
 [Match]
-Name={{ networking_interface }}
+Name={{ networking_interface | default("en*") }}
 
 [Network]
 Gateway={{ ipv4_gateway }}

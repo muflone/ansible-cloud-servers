@@ -1,5 +1,5 @@
 - name: Ping
   hosts: cloud:!disabled
-  gather_facts: no
+  gather_facts: false
   roles:
     - role: ping

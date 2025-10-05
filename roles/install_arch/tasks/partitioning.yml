@@ -15,9 +15,9 @@
       - "{{ item }}"
   with_items:
     - "{{ system_disks }}"
-  register: sgdisk
+  register: install_arch_sgdisk
   changed_when:
-    - "sgdisk.rc == 0"
+    - "install_arch_sgdisk.rc == 0"
 
 - name: Create partitions (EFI)
   when:
@@ -33,13 +33,13 @@
       - "{{ item }}"
   with_items:
     - "{{ system_disks }}"
-  register: sgdisk
+  register: install_arch_sgdisk
   changed_when:
-    - "sgdisk.rc == 0"
+    - "install_arch_sgdisk.rc == 0"
 
 - name: Store root partition number for later steps
   ansible.builtin.set_fact:
-    root_partno: "{{ '3' if ansible_virtualization_role == 'host' else '2' }}"
+    install_arch_root_partno: "{{ '3' if ansible_virtualization_role == 'host' else '2' }}"
 
 - name: Format the root partition
   ansible.builtin.command:
@@ -49,7 +49,7 @@
       - root
       - -m
       - 0
-      - "{{ system_disks[0] }}{{ 'p' if 'nvme' in system_disks[0] }}{{ root_partno }}"
+      - "{{ system_disks[0] }}{{ 'p' if 'nvme' in system_disks[0] }}{{ install_arch_root_partno }}"
   changed_when:
     - true
 

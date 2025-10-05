@@ -2,4 +2,4 @@
   hosts: new_servers
   roles:
     - role: install_arch
-      bootstrap_version: "latest"
+      install_arch_bootstrap_version: "latest"

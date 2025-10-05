@@ -1,20 +1,20 @@
 - name: Install needed packages
-  include_role:
+  ansible.builtin.include_role:
     name: install_packages
   vars:
-    packages:
+    install_packages_packages:
       - python-packaging
 
 - name: Install pulldocker
   ansible.builtin.pip:
     name: pulldocker
     virtualenv_command: "{{ ansible_python_interpreter }} -m venv"
-    virtualenv: "{{ pulldocker_path }}"
+    virtualenv: "{{ pulldocker_path }}/venv"
 
 - name: Configure pulldocker
   ansible.builtin.copy:
     src: pulldocker.yaml
-    dest: "{{ pulldocker_path }}/"
+    dest: "{{ pulldocker_path }}/pulldocker/"
     owner: root
     group: root
     mode: "0600"
@@ -22,7 +22,7 @@
 - name: Copy systemd service
   ansible.builtin.template:
     src: pulldocker.service.j2
-    dest: "{{ pulldocker_path }}/pulldocker.service"
+    dest: "{{ pulldocker_path }}/pulldocker/pulldocker.service"
     owner: root
     group: root
     mode: "0644"
@@ -30,25 +30,25 @@
 - name: Copy systemd timer
   ansible.builtin.copy:
     src: pulldocker.timer
-    dest: "{{ pulldocker_path }}/"
+    dest: "{{ pulldocker_path }}/pulldocker/"
     owner: root
     group: root
     mode: "0644"
 
 - name: Link systemd service
   ansible.builtin.file:
-    src: "{{ pulldocker_path }}/pulldocker.service"
+    src: "{{ pulldocker_path }}/pulldocker/pulldocker.service"
     dest: "/etc/systemd/system/pulldocker.service"
     state: link
 
 - name: Link systemd timer
   ansible.builtin.file:
-    src: "{{ pulldocker_path }}/pulldocker.timer"
+    src: "{{ pulldocker_path }}/pulldocker/pulldocker.timer"
     dest: "/etc/systemd/system/pulldocker.timer"
     state: link
 
 - name: Enable systemd timer
   ansible.builtin.service:
     name: pulldocker.timer
-    enabled: yes
+    enabled: true
     state: started

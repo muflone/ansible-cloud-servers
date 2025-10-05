@@ -4,8 +4,8 @@
     dest: /tmp/
     mode: "0644"
   loop:
-    - https://geo.mirror.pkgbuild.com/iso/{{ bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst
-    - https://archlinux.org/iso/{{ bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst.sig
+    - "https://geo.mirror.pkgbuild.com/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst"
+    - "https://archlinux.org/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst.sig"
 
 - name: Get Arch Linux ISO signature key
   ansible.builtin.command:
@@ -15,9 +15,9 @@
       - clear,wkd
       - --locate-external-key
       - pierre@archlinux.org
-  register: gpg_locate
+  register: install_arch_gpg_locate
   changed_when:
-    - "gpg_locate.rc == 0"
+    - "install_arch_gpg_locate.rc == 0"
 
 - name: Verify Arch Linux bootstrap image signature
   ansible.builtin.command:
@@ -26,8 +26,8 @@
       - --keyserver-options
       - auto-key-retrieve
       - --verify
-      - /tmp/archlinux-bootstrap-x86_64.tar.zst.sig
-      - /tmp/archlinux-bootstrap-x86_64.tar.zst
+      - "/tmp/archlinux-bootstrap-x86_64.tar.zst.sig"
+      - "/tmp/archlinux-bootstrap-x86_64.tar.zst"
   changed_when:
     - false
 

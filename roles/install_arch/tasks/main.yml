@@ -1,14 +1,14 @@
 - name: Check requirements
-  include_tasks: requirements.yml
+  ansible.builtin.include_tasks: requirements.yml
 
 - name: Partitioning
-  include_tasks: partitioning.yml
+  ansible.builtin.include_tasks: partitioning.yml
 
 - name: Get Arch Linux bootstrap ISO
-  include_tasks: bootstrap.yml
+  ansible.builtin.include_tasks: bootstrap.yml
 
 - name: Mount devices in the chroot
-  include_tasks: chroot_mount.yml
+  ansible.builtin.include_tasks: chroot_mount.yml
 
 - name: Configure pacman mirror
   ansible.builtin.template:
@@ -25,9 +25,9 @@
       - /tmp/root.x86_64
       - pacman-key
       - --init
-  register: chroot_pacman_key_init
+  register: install_arch_chroot_pacman_key_init
   changed_when:
-    - "chroot_pacman_key_init.rc == 0"
+    - "install_arch_chroot_pacman_key_init.rc == 0"
 
 - name: Populate pacman keyring inside bootstrap chroot
   ansible.builtin.command:
@@ -37,9 +37,9 @@
       - pacman-key
       - --populate
       - archlinux
-  register: chroot_pacman_key_populate
+  register: install_arch_chroot_pacman_key_populate
   changed_when:
-    - "chroot_pacman_key_populate.rc == 0"
+    - "install_arch_chroot_pacman_key_populate.rc == 0"
 
 - name: Install Arch Linux base from bootstrap chroot
   ansible.builtin.command:
@@ -47,7 +47,7 @@
       - chroot
       - /tmp/root.x86_64
       - pacstrap
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - base
       - linux
       - grub
@@ -59,86 +59,86 @@
 - name: Install ucode update
   when:
     - ansible_virtualization_role == 'host'
-  include_tasks: ucode.yaml
+  ansible.builtin.include_tasks: ucode.yaml
 
 - name: Run systemd-firstboot
   ansible.builtin.command:
     argv:
       - chroot
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - systemd-firstboot
       - --locale=C.UTF-8
       - --timezone=UTC
       - --hostname={{ hostname }}
-  register: chroot_systemd_firstboot
+  register: install_arch_chroot_systemd_firstboot
   changed_when:
-    - "chroot_systemd_firstboot.rc == 0"
+    - "install_arch_chroot_systemd_firstboot.rc == 0"
 
 - name: Run mkinitcpio
   ansible.builtin.command:
     argv:
       - chroot
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - mkinitcpio
       - --allpresets
-  register: chroot_mkinitcpio
+  register: install_arch_chroot_mkinitcpio
   changed_when:
-    - "chroot_mkinitcpio.rc == 0"
+    - "install_arch_chroot_mkinitcpio.rc == 0"
 
 - name: Setup pacman-init.service on first boot
   ansible.builtin.copy:
     src: pacman-init.service
-    dest: "{{ chroot_path }}/etc/systemd/system/"
+    dest: "{{ install_arch_chroot_path }}/etc/systemd/system/"
     owner: root
     group: root
     mode: "0644"
 
 - name: Remove generated keyring in the installation process
   ansible.builtin.file:
-    path: "{{ chroot_path }}/etc/pacman.d/gnupg"
+    path: "{{ install_arch_chroot_path }}/etc/pacman.d/gnupg"
     state: absent
 
 - name: Make sure /etc/machine-id is absent
   ansible.builtin.file:
-    path: "{{ chroot_path }}/etc/machine-id"
+    path: "{{ install_arch_chroot_path }}/etc/machine-id"
     state: absent
 
 - name: Enable services inside chroot
   ansible.builtin.command:
     argv:
       - chroot
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - systemctl
       - enable
       - pacman-init
-  register: chroot_systemd_services
+  register: install_arch_chroot_systemd_services
   changed_when:
-    - "chroot_systemd_services.rc == 0"
+    - "install_arch_chroot_systemd_services.rc == 0"
 
 - name: Configure networking
-  include_tasks: chroot_networking.yml
+  ansible.builtin.include_tasks: chroot_networking.yml
 
 - name: Configure SSH
-  include_tasks: chroot_ssh.yml
+  ansible.builtin.include_tasks: chroot_ssh.yml
 
 - name: Clean pacman cache
   ansible.builtin.command:
     argv:
       - chroot
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - paccache
       - --remove
       - --keep
       - 0
-  register: chroot_pacman_clean_cache
+  register: install_arch_chroot_pacman_clean_cache
   changed_when:
-    - "chroot_pacman_clean_cache.rc == 0"
+    - "install_arch_chroot_pacman_clean_cache.rc == 0"
 
 - name: Setup GRUB
-  include_tasks: chroot_grub.yml
+  ansible.builtin.include_tasks: chroot_grub.yml
 
 - name: Unmount devices from the chroot
-  include_tasks: chroot_umount.yml
+  ansible.builtin.include_tasks: chroot_umount.yml
 
 - name: Reboot
   ansible.builtin.reboot:

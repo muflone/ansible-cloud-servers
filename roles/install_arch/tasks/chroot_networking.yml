@@ -5,7 +5,7 @@
     - name: Install 10-static-ethernet.network
       ansible.builtin.template:
         src: 10-static-ethernet.network.j2
-        dest: "{{ chroot_path }}/etc/systemd/network/10-static-ethernet.network"
+        dest: "{{ install_arch_chroot_path }}/etc/systemd/network/10-static-ethernet.network"
         owner: root
         group: root
         mode: "0644"
@@ -14,7 +14,7 @@
 
     - name: Create drop-in directory for 10-static-ethernet.network
       ansible.builtin.file:
-        path: "{{ chroot_path }}/etc/systemd/network/10-static-ethernet.network.d"
+        path: "{{ install_arch_chroot_path }}/etc/systemd/network/10-static-ethernet.network.d"
         state: directory
         owner: root
         group: root
@@ -25,7 +25,7 @@
         - static_dns | default(true)
       ansible.builtin.copy:
         src: dns.conf
-        dest: "{{ chroot_path }}/etc/systemd/network/10-static-ethernet.network.d/dns.conf"
+        dest: "{{ install_arch_chroot_path }}/etc/systemd/network/10-static-ethernet.network.d/dns.conf"
         owner: root
         group: root
         mode: "0644"
@@ -39,7 +39,7 @@
     - name: Install 10-dhcp-ethernet.network
       ansible.builtin.template:
         src: 10-dhcp-ethernet.network.j2
-        dest: "{{ chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network"
+        dest: "{{ install_arch_chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network"
         owner: root
         group: root
         mode: "0644"
@@ -48,7 +48,7 @@
 
     - name: Create drop-in directory for 10-dhcp-ethernet.network
       ansible.builtin.file:
-        path: "{{ chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network.d"
+        path: "{{ install_arch_chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network.d"
         state: directory
         owner: root
         group: root
@@ -59,7 +59,7 @@
         - static_dns | default(false)
       ansible.builtin.copy:
         src: dns.conf
-        dest: "{{ chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network.d/dns.conf"
+        dest: "{{ install_arch_chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network.d/dns.conf"
         owner: root
         group: root
         mode: "0644"
@@ -72,7 +72,7 @@
   ansible.builtin.template:
     src: additional_addresses.conf.j2
     dest: >
-      {{ chroot_path }}/etc/systemd/network/
+      {{ install_arch_chroot_path }}/etc/systemd/network/
       10-{{ 'dhcp' if dhcp | default(false) else 'static' }}-ethernet.network.d/
       additional_addresses.conf
     owner: root
@@ -84,7 +84,7 @@
 - name: Create symlink to resolv.conf
   ansible.builtin.file:
     src: /run/systemd/resolve/stub-resolv.conf
-    dest: "{{ chroot_path }}/etc/resolv.conf"
+    dest: "{{ install_arch_chroot_path }}/etc/resolv.conf"
     state: link
     force: true
     follow: false
@@ -95,8 +95,11 @@
   ansible.builtin.command:
     argv:
       - chroot
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - systemctl
       - enable
       - systemd-networkd
       - systemd-resolved
+  register: install_arch_chroot_networking_enable
+  changed_when:
+    - "install_arch_chroot_networking_enable.rc == 0"

@@ -3,20 +3,20 @@
     argv:
       - cat
       - /etc/motd
-  register: motd_contents
+  register: install_arch_motd_contents
   changed_when:
-    - motd_contents.stdout | length > 0
+    - install_arch_motd_contents.stdout | length > 0
 
 - name: Check whether we're running in Hetzner rescue environment
   when:
-    - "'Hetzner Rescue' not in motd_contents.stdout"
+    - "'Hetzner Rescue' not in install_arch_motd_contents.stdout"
   ansible.builtin.fail:
     msg: "Not running in rescue system!"
 
 # It sources some files which sets TMPDIR=/tmp/hwc which breaks mkinitcpio
 - name: Remove problematic ~/.bashrc
   when:
-    - "'Hetzner Rescue' in motd_contents.stdout"
+    - "'Hetzner Rescue' in install_arch_motd_contents.stdout"
   ansible.builtin.file:
     path: /root/.bashrc
     state: absent

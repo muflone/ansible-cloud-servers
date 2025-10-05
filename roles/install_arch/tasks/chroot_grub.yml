@@ -2,16 +2,16 @@
   ansible.builtin.command:
     argv:
       - chroot
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - grub-install
       - --target=i386-pc
       - --recheck
       - "{{ item }}"
   with_items:
     - "{{ system_disks }}"
-  register: chroot_grub_install_legacy
+  register: install_arch_chroot_grub_install_legacy
   changed_when:
-    - "chroot_grub_install_legacy.rc == 0"
+    - "install_arch_chroot_grub_install_legacy.rc == 0"
 
 - name: Install GRUB (EFI)
   when:
@@ -19,7 +19,7 @@
   ansible.builtin.command:
     argv:
       - chroot
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - grub-install
       - --target=x86_64-efi
       - --efi-directory=/efi
@@ -28,17 +28,17 @@
       - "{{ item }}"
   with_items:
     - "{{ system_disks }}"
-  register: chroot_grub_install_uefi
+  register: install_arch_chroot_grub_install_uefi
   changed_when:
-    - "chroot_grub_install_uefi.rc == 0"
+    - "install_arch_chroot_grub_install_uefi.rc == 0"
 
 - name: Configure GRUB
   ansible.builtin.command:
     argv:
       - chroot
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - grub-mkconfig
       - --output=/boot/grub/grub.cfg
-  register: chroot_grub_mkconfig
+  register: install_arch_chroot_grub_mkconfig
   changed_when:
-    - "chroot_grub_mkconfig.rc == 0"
+    - "install_arch_chroot_grub_mkconfig.rc == 0"

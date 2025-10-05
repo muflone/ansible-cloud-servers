@@ -1,8 +1,8 @@
 - name: Install packages etckeeper and less
-  include_role:
+  ansible.builtin.include_role:
     name: install_packages
   vars:
-    packages:
+    install_packages_packages:
       - etckeeper
       - less
 
@@ -34,7 +34,7 @@
   ansible.builtin.copy:
     src: "{{ etckeeper_src }}/"
     dest: "{{ etckeeper_path }}/"
-    remote_src: yes
+    remote_src: true
     mode: preserve
   register: etckeeper_src_copied
 
@@ -59,14 +59,12 @@
   community.general.git_config:
     name: user.name
     value: "Muflone"
-    repo: "{{ etckeeper_src }}"
     scope: global
 
 - name: Set committer email
   community.general.git_config:
     name: user.email
     value: "muflone@localhost"
-    repo: "{{ etckeeper_src }}"
     scope: global
 
 - name: Update etckeeper for /etc
@@ -78,12 +76,12 @@
       - "automatically commit changes in /etc"
   register: etckeeper_cmd
   changed_when:
-    - etckeeper_cmd.rc == 0
+    - "etckeeper_cmd.rc == 0"
   failed_when:
     - false
 
 - name: Enable systemd timer
   ansible.builtin.service:
     name: etckeeper.timer
-    enabled: yes
+    enabled: true
     state: started

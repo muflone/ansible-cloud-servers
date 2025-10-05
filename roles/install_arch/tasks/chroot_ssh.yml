@@ -1,17 +1,17 @@
 - name: Configure sshd settings via drop-in
   ansible.builtin.copy:
     src: 90-sshd.conf
-    dest: "{{ chroot_path }}/etc/ssh/sshd_config.d/90-sshd.conf"
+    dest: "{{ install_arch_chroot_path }}/etc/ssh/sshd_config.d/90-sshd.conf"
     owner: root
     group: root
     mode: "0644"
 
 - name: Configure sshd port via drop-in
   when:
-  - sshd_port is defined
+    - sshd_port is defined
   ansible.builtin.template:
     src: 91-sshd-port.conf.j2
-    dest: "{{ chroot_path }}/etc/ssh/sshd_config.d/91-sshd-port.conf"
+    dest: "{{ install_arch_chroot_path }}/etc/ssh/sshd_config.d/91-sshd-port.conf"
     owner: root
     group: root
     mode: "0644"
@@ -19,7 +19,7 @@
 - name: Copy SSH authorized_keys to /root/.ssh
   ansible.builtin.copy:
     src: authorized_keys
-    dest: "{{ chroot_path }}/root/.ssh/authorized_keys"
+    dest: "{{ install_arch_chroot_path }}/root/.ssh/authorized_keys"
     owner: root
     group: root
     mode: "0600"
@@ -28,7 +28,10 @@
   ansible.builtin.command:
     argv:
       - chroot
-      - "{{ chroot_path }}"
+      - "{{ install_arch_chroot_path }}"
       - systemctl
       - enable
       - sshd
+  register: install_arch_chroot_ssh_enable
+  changed_when:
+    - "install_arch_chroot_ssh_enable.rc == 0"

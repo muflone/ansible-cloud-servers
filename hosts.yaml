@@ -4,12 +4,12 @@ new_servers:
       ansible_host: test2.muflone.com
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
     new_server_2:
       ansible_host: cloud8.muflone.com
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
 cloud:
   hosts:
@@ -22,12 +22,12 @@ cloud:
       ansible_host: cloud8.muflone.com
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
     test2.muflone.com:
       ansible_host: test2.muflone.com
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
-      ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
 
 disabled:
   hosts:

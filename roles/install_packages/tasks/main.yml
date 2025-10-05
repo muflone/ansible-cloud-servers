@@ -3,7 +3,7 @@
     - ansible_os_family == 'Archlinux'
     - packages is defined
   community.general.pacman:
-    name: "{{ packages }}"
+    name: "{{ install_packages_packages }}"
     state: present
 
 - name: Install packages (Debian / Ubuntu)
@@ -11,5 +11,5 @@
     - packages is defined
     - ansible_os_family == 'Debian' or ansible_os_family == 'Ubuntu'
   ansible.builtin.apt:
-    name: "{{ packages }}"
+    name: "{{ install_packages_packages }}"
     state: present
