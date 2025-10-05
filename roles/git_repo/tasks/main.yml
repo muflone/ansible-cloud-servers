@@ -1,0 +1,33 @@
+- name: Set git credentials store
+  when:
+    - github_token is defined
+  community.general.git_config:
+    name: credential.helper
+    value: "store"
+    scope: global
+
+- name: Save git credentials
+  when:
+    - github_token is defined
+  ansible.builtin.template:
+    src: git-credentials.j2
+    dest: "~/.git-credentials"
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Clone the git repository
+  when:
+    - git_repo_git_repository is defined
+    - git_repo_repository_dir is defined
+  ansible.builtin.git:
+    clone: true
+    repo: "{{ git_repo_git_repository }}" # noqa: latest
+    version: "HEAD"
+    dest: "{{ git_repo_repository_dir }}"
+    update: false
+
+- name: Setup git-crypt
+  when:
+    - git_repo_git_crypt is defined
+  ansible.builtin.include_tasks: git_crypt.yml
