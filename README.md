@@ -39,10 +39,10 @@
 
   Execute regular maintenance, including upgrade the installed packages and
   install extra packages on all the hosts.
-- **playbooks/cloud8.muflone.com.yml**
+- **playbooks/server_cloud8.yml**
 
   Execute regular maintenance for the host cloud8.muflone.com.
 
-- **playbooks/test2.muflone.com.yml**
+- **playbooks/server_test2.yml**
 
   Execute regular maintenance for the host test2.muflone.com.
