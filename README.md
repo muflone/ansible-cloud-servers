@@ -42,7 +42,3 @@
 - **playbooks/tasks/test2.muflone.com.yml**
 
   Execute regular maintenance for the host test2.muflone.com.
-
-- **playbooks/tasks/test3.muflone.com.yml**
-
-  Execute regular maintenance for the host test3.muflone.com.
