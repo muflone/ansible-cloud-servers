@@ -2,6 +2,8 @@
   hosts: cloud8
   gather_facts: true
   roles:
+    - role: common
+
     - role: upgrade_packages
 
     - role: etckeeper

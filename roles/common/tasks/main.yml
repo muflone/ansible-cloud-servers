@@ -1,0 +1,7 @@
+- name: Copy .bash_profile to /root
+  ansible.builtin.copy:
+    src: bash.profile
+    dest: "~/.bash_profile"
+    owner: root
+    group: root
+    mode: "0600"
