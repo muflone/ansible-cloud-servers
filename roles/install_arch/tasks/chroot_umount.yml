@@ -25,7 +25,7 @@
 
 - name: Unmount /efi from the chroot
   when:
-    - ansible_virtualization_role == 'host'
+    - partition_type == 'efi'
   ansible.posix.mount:
     path: "{{ install_arch_chroot_path }}/efi"
     state: unmounted

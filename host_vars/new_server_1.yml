@@ -1,6 +1,7 @@
 filesystem: "ext4"
 system_disks:
   - /dev/sda
+partition_type: 'mbr'
 dhcp: false
 hostname: "test2.muflone.com"
 ipv4_address: 157.180.90.27

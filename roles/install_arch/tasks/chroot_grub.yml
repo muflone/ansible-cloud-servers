@@ -1,4 +1,6 @@
 - name: Install GRUB (MBR)
+  when:
+    - partition_type != 'efi'
   ansible.builtin.command:
     argv:
       - chroot
@@ -15,7 +17,7 @@
 
 - name: Install GRUB (EFI)
   when:
-    - ansible_virtualization_role == 'host'
+    - partition_type == 'efi'
   ansible.builtin.command:
     argv:
       - chroot

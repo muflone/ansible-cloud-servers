@@ -1,6 +1,6 @@
 - name: Create partitions (MBR)
   when:
-    - ansible_virtualization_role != 'host'
+    - partition_type != 'efi'
   ansible.builtin.command:
     argv:
       - sgdisk
@@ -21,7 +21,7 @@
 
 - name: Create partitions (EFI)
   when:
-    - ansible_virtualization_role == 'host'
+    - partition_type == 'efi'
   ansible.builtin.command:
     argv:
       - sgdisk
@@ -39,7 +39,7 @@
 
 - name: Store root partition number for later steps
   ansible.builtin.set_fact:
-    install_arch_root_partno: "{{ '3' if ansible_virtualization_role == 'host' else '2' }}"
+    install_arch_root_partno: "{{ '3' if partition_type == 'efi' else '2' }}"
 
 - name: Format the root partition
   ansible.builtin.command:
@@ -55,7 +55,7 @@
 
 - name: Format the EFI system partition
   when:
-    - ansible_virtualization_role == 'host'
+    - partition_type == 'efi'
   ansible.builtin.command:
     argv:
       - mkfs.fat

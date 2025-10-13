@@ -13,7 +13,7 @@
 
 - name: Create the efi mountpoint
   when:
-    - ansible_virtualization_role == 'host'
+    - partition_type == 'efi'
   ansible.builtin.file:
     path: "{{ install_arch_chroot_path }}/efi"
     state: directory
@@ -21,7 +21,7 @@
 
 - name: Mount the efi filesystem
   when:
-    - ansible_virtualization_role == 'host'
+    - partition_type == 'efi'
   ansible.posix.mount:
     src: "{{ system_disks[0] }}{{ 'p2' if 'nvme' in system_disks[0] else '2' }}"
     path: "{{ install_arch_chroot_path }}/efi"

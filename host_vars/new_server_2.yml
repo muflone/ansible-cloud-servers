@@ -1,6 +1,7 @@
 filesystem: "ext4"
 system_disks:
   - /dev/sda
+partition_type: 'mbr'
 dhcp: false
 hostname: "cloud8.muflone.com"
 ipv4_address: 65.21.190.49
