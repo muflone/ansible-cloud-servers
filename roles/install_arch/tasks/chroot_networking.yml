@@ -20,7 +20,7 @@
         group: root
         mode: "0755"
 
-    - name: Configure static dns (static)
+    - name: Configure static DNS (static)
       when:
         - static_dns | default(true)
       ansible.builtin.copy:
@@ -32,7 +32,7 @@
       notify:
         - Restart networkd
 
-- name: Configure network (dhcp)
+- name: Configure network (DHCP)
   when:
     - dhcp | default(false)
   block:
@@ -54,7 +54,7 @@
         group: root
         mode: "0755"
 
-    - name: Configure static dns (dhcp)
+    - name: Configure static DNS (DHCP)
       when:
         - static_dns | default(false)
       ansible.builtin.copy:

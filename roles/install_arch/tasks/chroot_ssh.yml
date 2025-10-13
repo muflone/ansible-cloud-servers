@@ -1,4 +1,4 @@
-- name: Configure sshd settings via drop-in
+- name: Configure SSH settings via drop-in
   ansible.builtin.copy:
     src: 90-sshd.conf
     dest: "{{ install_arch_chroot_path }}/etc/ssh/sshd_config.d/90-sshd.conf"
@@ -6,7 +6,7 @@
     group: root
     mode: "0644"
 
-- name: Configure sshd port via drop-in
+- name: Configure SSH port via drop-in
   when:
     - sshd_port is defined
   ansible.builtin.template:
