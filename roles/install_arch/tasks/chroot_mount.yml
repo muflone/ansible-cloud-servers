@@ -3,8 +3,6 @@
     install_arch_chroot_path: "/mnt"
 
 - name: Mount the root filesystem
-  when:
-    - filesystem == "ext4"
   ansible.posix.mount:
     src: "{{ install_arch_root_partname }}"
     path: "{{ install_arch_chroot_path }}"
@@ -31,8 +29,6 @@
     fstype: vfat
 
 - name: Mount chroot to bootstrap chroot
-  when:
-    - filesystem == "ext4"
   ansible.posix.mount:
     src: "{{ install_arch_chroot_path }}"
     path: /tmp/root.x86_64/mnt
