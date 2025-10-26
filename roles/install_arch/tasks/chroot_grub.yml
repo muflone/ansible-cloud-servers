@@ -8,9 +8,7 @@
       - grub-install
       - --target=i386-pc
       - --recheck
-      - "{{ item }}"
-  with_items:
-    - "{{ system_disks }}"
+      - "{{ install_arch_system_disk }}"
   register: install_arch_chroot_grub_install_legacy
   changed_when:
     - "install_arch_chroot_grub_install_legacy.rc == 0"
