@@ -34,6 +34,58 @@
   changed_when:
     - "install_arch_chroot_grub_install_uefi.rc == 0"
 
+- name: Add serial to GRUB_TERMINAL_INPUT
+  when:
+    - install_arch_grub_needs_serial | default(false)
+  community.general.ini_file:
+    path: "{{ install_arch_chroot_path }}/etc/default/grub"
+    option: "GRUB_TERMINAL_INPUT"
+    value: '"console serial"'
+    no_extra_spaces: true
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    state: present
+
+- name: Add serial to GRUB_TERMINAL_OUTPUT
+  when:
+    - install_arch_grub_needs_serial | default(false)
+  community.general.ini_file:
+    path: "{{ install_arch_chroot_path }}/etc/default/grub"
+    option: "GRUB_TERMINAL_OUTPUT"
+    value: '"console serial"'
+    no_extra_spaces: true
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    state: present
+
+- name: Add serial to GRUB_SERIAL_COMMAND
+  when:
+    - install_arch_grub_needs_serial | default(false)
+  community.general.ini_file:
+    path: "{{ install_arch_chroot_path }}/etc/default/grub"
+    option: "GRUB_SERIAL_COMMAND"
+    value: '"serial --unit=0 --speed=115200"'
+    no_extra_spaces: true
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    state: present
+
+- name: Add serial to GRUB_CMDLINE_LINUX_DEFAULT
+  when:
+    - install_arch_grub_needs_serial | default(false)
+  community.general.ini_file:
+    path: "{{ install_arch_chroot_path }}/etc/default/grub"
+    option: "GRUB_CMDLINE_LINUX_DEFAULT"
+    value: '"console=tty0 console=ttyS0,115200"'
+    no_extra_spaces: true
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+    state: present
+
 - name: Configure GRUB
   ansible.builtin.command:
     argv:
