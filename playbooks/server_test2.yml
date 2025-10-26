@@ -10,3 +10,8 @@
 
     - role: install_packages
       install_packages_packages: "{{ packages }}"
+
+    - role: install_packages
+      when:
+        - packages_extra is defined
+      install_packages_packages: "{{ packages_extra }}"

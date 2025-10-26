@@ -7,5 +7,9 @@
     - role: etckeeper
 
     - role: install_packages
-      vars:
-        install_packages_packages: "{{ packages }}"
+      install_packages_packages: "{{ packages }}"
+
+    - role: install_packages
+      when:
+        - packages_extra is defined
+      install_packages_packages: "{{ packages_extra }}"
