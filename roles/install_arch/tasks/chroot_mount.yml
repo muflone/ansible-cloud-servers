@@ -15,7 +15,7 @@
   when:
     - partition_type == 'efi'
   ansible.builtin.file:
-    path: "{{ install_arch_chroot_path }}/efi"
+    path: "{{ install_arch_chroot_path }}/boot"
     state: directory
     owner: root
     group: root
@@ -26,7 +26,7 @@
     - partition_type == 'efi'
   ansible.posix.mount:
     src: "{{ install_arch_efi_partname }}"
-    path: "{{ install_arch_chroot_path }}/efi"
+    path: "{{ install_arch_chroot_path }}/boot"
     state: mounted
     fstype: vfat
 

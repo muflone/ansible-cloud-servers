@@ -21,7 +21,7 @@
       - chroot
       - "{{ install_arch_chroot_path }}"
       - grub-install
-      - --efi-directory=/efi
+      - --efi-directory=/boot
       - --bootloader-id=GRUB
   register: install_arch_chroot_grub_install_uefi
   changed_when:
