@@ -6,7 +6,7 @@
   when:
     - filesystem == "ext4"
   ansible.posix.mount:
-    src: "{{ install_arch_system_disk }}{{ 'p' if 'nvme' in install_arch_system_disk }}{{ install_arch_root_partno }}"
+    src: "{{ install_arch_root_partname }}"
     path: "{{ install_arch_chroot_path }}"
     state: mounted
     fstype: ext4
@@ -25,7 +25,7 @@
   when:
     - partition_type == 'efi'
   ansible.posix.mount:
-    src: "{{ install_arch_system_disk }}{{ 'p2' if 'nvme' in install_arch_system_disk else '2' }}"
+    src: "{{ install_arch_efi_partname }}"
     path: "{{ install_arch_chroot_path }}/efi"
     state: mounted
     fstype: vfat

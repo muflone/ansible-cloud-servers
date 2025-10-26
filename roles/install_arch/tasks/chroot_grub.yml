@@ -21,13 +21,8 @@
       - chroot
       - "{{ install_arch_chroot_path }}"
       - grub-install
-      - --target=x86_64-efi
       - --efi-directory=/efi
-      - --removable
-      - --recheck
-      - "{{ item }}"
-  with_items:
-    - "{{ system_disks }}"
+      - --bootloader-id=GRUB
   register: install_arch_chroot_grub_install_uefi
   changed_when:
     - "install_arch_chroot_grub_install_uefi.rc == 0"

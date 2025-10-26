@@ -1,3 +1,14 @@
+- name: Clear partitions
+  ansible.builtin.command:
+    argv:
+      - sgdisk
+      - --zap-all
+      - "{{ install_arch_system_disk }}"
+  register: install_arch_sgdisk
+  changed_when:
+    - "install_arch_sgdisk.rc == 0"
+  ignore_errors: true
+
 - name: Create partitions (MBR)
   when:
     - partition_type != 'efi'
@@ -25,29 +36,36 @@
       - sgdisk
       - --align-end
       - --clear
-      - --new=0:0:+1M --change-name=0:'BIOS boot partition' --typecode=0:ef02
-      - --new=0:0:+512M --change-name=0:'EFI system partition' --typecode=0:ef00
-      - --new=0:0:0 --change-name=0:root --typecode=0:8304
+      - --new=0:0:+512M
+      - --change-name=0:'EFI system partition'
+      - --typecode=0:ef00
+      - --new=0:0:0
+      - --change-name=0:root
+      - --typecode=0:8300
       - "{{ install_arch_system_disk }}"
   register: install_arch_sgdisk
   changed_when:
     - "install_arch_sgdisk.rc == 0"
 
-- name: Store root partition number for later steps
+- name: Store partition numbers for later steps
   ansible.builtin.set_fact:
-    install_arch_root_partno: "{{ '3' if partition_type == 'efi' else '2' }}"
+    install_arch_efi_partname: "{{ install_arch_system_disk }}{{ 'p' if 'nvme' in install_arch_system_disk }}1"
+    install_arch_root_partname: "{{ install_arch_system_disk }}{{ 'p' if 'nvme' in install_arch_system_disk }}2"
 
-- name: Format the root partition
+- name: Create efi partition node
+  when:
+    - partition_type == 'efi'
   ansible.builtin.command:
     argv:
-      - mkfs.ext4
-      - -L
-      - root
+      - mknod
       - -m
-      - 0
-      - "{{ install_arch_system_disk }}{{ 'p' if 'nvme' in install_arch_system_disk }}{{ install_arch_root_partno }}"
-  changed_when:
-    - true
+      - "u=rw,g=rw,o="
+      - "{{ install_arch_efi_partname }}"
+      - b
+      - 8
+      - 1
+  args:
+    creates: "{{ install_arch_efi_partname }}"
 
 - name: Format the EFI system partition
   when:
@@ -61,6 +79,32 @@
       - 4096
       - -n
       - ESP
-      - "{{ install_arch_system_disk }}{{ 'p2' if 'nvme' in install_arch_system_disk else '2' }}"
+      - "{{ install_arch_efi_partname }}"
   changed_when:
     - false
+
+- name: Create root partition node
+  ansible.builtin.command:
+    argv:
+      - mknod
+      - -m
+      - "u=rw,g=rw,o="
+      - "{{ install_arch_root_partname }}"
+      - b
+      - 8
+      - 2
+  args:
+    creates: "{{ install_arch_root_partname }}"
+
+- name: Format the root partition
+  ansible.builtin.command:
+    argv:
+      - mkfs.ext4
+      - -L
+      - root
+      - -m
+      - 0
+      - -FF
+      - "{{ install_arch_root_partname }}"
+  changed_when:
+    - true
