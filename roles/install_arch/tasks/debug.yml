@@ -1,0 +1,7 @@
+- name: Display the value of ansible_facts
+  ansible.builtin.debug:
+    var: ansible_facts
+
+#- name: Stop here
+#  ansible.builtin.fail:
+#    msg: "Stop here"
