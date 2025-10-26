@@ -1,6 +1,11 @@
 - name: Check requirements
   ansible.builtin.include_tasks: requirements.yml
 
+- name: Prepare Alpine environment
+  when:
+    - install_arch_rescue_type == 'oracle-alpine'
+  ansible.builtin.include_tasks: prepare_oracle_alpine.yml
+
 - name: Partitioning
   ansible.builtin.include_tasks: partitioning.yml
 

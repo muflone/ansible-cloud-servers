@@ -1,0 +1,102 @@
+- name: Load needed modules
+  community.general.modprobe:
+    name: "{{ item }}"
+    state: "present"
+  with_items:
+    - "ext4"
+    - "vfat"
+    - "nls_cp437"
+    - "nls_utf8"
+
+- name: Create /media/setup
+  ansible.builtin.file:
+    path: "/media/setup"
+    state: directory
+    owner: root
+    group: root
+    mode: "u=rwx,g=rx,o=rx"
+
+- name: Copy /media/sda to /media/setup
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/media/setup"
+    owner: root
+    group: root
+    mode: "preserve"
+  with_fileglob:
+    - "/media/sda/*"
+
+- name: Create /lib/setup
+  ansible.builtin.file:
+    path: "/lib/setup"
+    state: directory
+    owner: root
+    group: root
+    mode: "u=rwx,g=rx,o=rx"
+
+- name: Copy /.modloop to /lib/setup
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/lib/setup"
+    remote_src: true
+    owner: root
+    group: root
+    mode: "preserve"
+  with_fileglob:
+    - "/.modloop/*"
+
+- name: Stop modloop
+  ansible.builtin.command:
+    argv:
+      - /etc/init.d/modloop
+      - stop
+  register:
+    install_arch_modloop_stop
+  changed_when:
+    - "install_arch_modloop_stop.rc == 0"
+
+- name: Unmount system disk
+  ansible.posix.mount:
+    path: "/media/sda"
+    state: unmounted
+
+- name: Copy /media/setup to /media/sda
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/media/sda"
+    remote_src: true
+    owner: root
+    group: root
+    mode: "preserve"
+  with_fileglob:
+    - "/media/setup/*"
+
+- name: Copy /lib/setup to /.modloop
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/.modloop"
+    remote_src: true
+    owner: root
+    group: root
+    mode: "preserve"
+  with_fileglob:
+    - "/lib/setup/*"
+
+- name: Update repositories
+  community.general.apk:
+    update_cache: true
+
+- name: Install needed packages
+  community.general.apk:
+    name: "{{ item }}"
+    update_cache: false
+    state: present
+  loop:
+    - arch-install-scripts
+    - pacman
+    - dosfstools
+    - e2fsprogs
+    - zstd
+    - sgdisk
+    - dirmngr
+    - curl

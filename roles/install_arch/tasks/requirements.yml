@@ -9,9 +9,22 @@
 
 - name: Check whether we're running in Hetzner rescue environment
   when:
-    - "'Hetzner Rescue' not in install_arch_motd_contents.stdout"
+    - "'Hetzner Rescue' in install_arch_motd_contents.stdout"
+  ansible.builtin.set_fact:
+    install_arch_rescue_type: 'hetzner-rescue'
+
+- name: Check whether we're running in Alpine rescue environment
+  when:
+    - "'Oracle Cloud Alpine rescue' in install_arch_motd_contents.stdout"
+  ansible.builtin.set_fact:
+    install_arch_rescue_type: 'oracle-alpine'
+
+- name: Check the rescue type
+  when:
+    - install_arch_rescue_type != 'hetzner-rescue'
+    - install_arch_rescue_type != 'oracle-alpine'
   ansible.builtin.fail:
-    msg: "Not running in rescue system!"
+    msg: "Not running in a supported rescue system!"
 
 # It sources some files which sets TMPDIR=/tmp/hwc which breaks mkinitcpio
 - name: Remove problematic ~/.bashrc

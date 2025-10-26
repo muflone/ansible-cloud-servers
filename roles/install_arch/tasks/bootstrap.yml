@@ -1,4 +1,6 @@
 - name: Download Arch Linux bootstrap image
+  when:
+    - install_arch_rescue_type != 'oracle-alpine'
   ansible.builtin.get_url:
     url: "{{ item }}"
     dest: /tmp/
@@ -10,6 +12,8 @@
     - "https://archlinux.org/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst.sig"
 
 - name: Get Arch Linux ISO signature key
+  when:
+    - install_arch_rescue_type != 'oracle-alpine'
   ansible.builtin.command:
     argv:
       - gpg
@@ -22,6 +26,8 @@
     - "install_arch_gpg_locate.rc == 0"
 
 - name: Verify Arch Linux bootstrap image signature
+  when:
+    - install_arch_rescue_type != 'oracle-alpine'
   ansible.builtin.command:
     argv:
       - gpg
@@ -33,11 +39,43 @@
   changed_when:
     - false
 
+- name: Decompress Arch Linux boostrap image
+  when:
+    - install_arch_rescue_type != 'oracle-alpine'
+  ansible.builtin.command:
+    argv:
+      - zstd
+      - -d
+      - /tmp/archlinux-bootstrap-x86_64.tar.zst
+    creates: /tmp/archlinux-bootstrap-x86_64.tar
+
 - name: Extract Arch Linux boostrap image
+  when:
+    - install_arch_rescue_type != 'oracle-alpine'
   ansible.builtin.unarchive:
-    src: /tmp/archlinux-bootstrap-x86_64.tar.zst
+    src: /tmp/archlinux-bootstrap-x86_64.tar
     dest: /tmp
     remote_src: true
+    creates: /tmp/root.x86_64
+
+- name: Remount tmpfs
+  when:
+    - install_arch_rescue_type == 'oracle-alpine'
+  ansible.posix.mount:
+    path: "/"
+    state: "remounted"
+    opts: "size=1G"
+    fstype: "tmpfs"
+
+- name: Download, decompress and extract Arch Linux boostrap image
+  when:
+    - install_arch_rescue_type == 'oracle-alpine'
+  ansible.builtin.shell:
+    cmd: >
+      set -o pipefail
+
+      curl "https://geo.mirror.pkgbuild.com/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst" |
+      zstd -d --stdout | tar xv --exclude=root.x86_64/usr/share/locale --exclude=root.x86_64/usr/share/man -C /tmp
     creates: /tmp/root.x86_64
 
 - name: Copy resolv.conf to bootstrap chroot
