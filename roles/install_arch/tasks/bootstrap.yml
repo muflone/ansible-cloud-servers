@@ -2,7 +2,7 @@
   ansible.builtin.get_url:
     url: "{{ item }}"
     dest: /tmp/
-    mode: "0644"
+    mode: "u=rw,g=,o="
   loop:
     - "https://geo.mirror.pkgbuild.com/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst"
     - "https://archlinux.org/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst.sig"
@@ -45,7 +45,7 @@
     dest: /tmp/root.x86_64/etc/resolv.conf
     owner: root
     group: root
-    mode: "0644"
+    mode: "u=rw,g=r,o=r"
 
 - name: Mount /proc to bootstrap chroot
   ansible.posix.mount:

@@ -24,7 +24,7 @@
     dest: "{{ pulldocker_path }}"
     owner: root
     group: root
-    mode: "0600"
+    mode: "u=rw,g=,o="
 
 - name: Copy systemd service
   ansible.builtin.template:
@@ -32,7 +32,7 @@
     dest: "{{ pulldocker_path }}/pulldocker.service"
     owner: root
     group: root
-    mode: "0644"
+    mode: "u=rw,g=r,o=r"
 
 - name: Copy systemd timer
   ansible.builtin.copy:
@@ -40,7 +40,7 @@
     dest: "{{ pulldocker_path }}"
     owner: root
     group: root
-    mode: "0644"
+    mode: "u=rw,g=r,o=r"
 
 - name: Link systemd service
   ansible.builtin.file:

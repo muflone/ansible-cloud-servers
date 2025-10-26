@@ -16,7 +16,7 @@
     dest: /tmp/root.x86_64/etc/pacman.d/mirrorlist
     owner: root
     group: root
-    mode: "0644"
+    mode: "u=rw,g=r,o=r"
 
 - name: Initialize pacman keyring inside bootstrap chroot
   ansible.builtin.command:
@@ -91,7 +91,7 @@
     dest: "{{ install_arch_chroot_path }}/etc/systemd/system/"
     owner: root
     group: root
-    mode: "0644"
+    mode: "u=rw,g=r,o=r"
 
 - name: Remove generated keyring in the installation process
   ansible.builtin.file:

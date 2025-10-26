@@ -4,7 +4,7 @@
     dest: "{{ install_arch_chroot_path }}/etc/ssh/sshd_config.d/90-sshd.conf"
     owner: root
     group: root
-    mode: "0644"
+    mode: "u=rw,g=r,o=r"
 
 - name: Configure SSH port via drop-in
   when:
@@ -14,7 +14,7 @@
     dest: "{{ install_arch_chroot_path }}/etc/ssh/sshd_config.d/91-sshd-port.conf"
     owner: root
     group: root
-    mode: "0644"
+    mode: "u=rw,g=r,o=r"
 
 - name: Copy SSH authorized_keys to /root/.ssh
   ansible.builtin.copy:
@@ -22,7 +22,7 @@
     dest: "{{ install_arch_chroot_path }}/root/.ssh/authorized_keys"
     owner: root
     group: root
-    mode: "0600"
+    mode: "u=rw,g=,o="
 
 - name: Enable service sshd inside chroot
   ansible.builtin.command:

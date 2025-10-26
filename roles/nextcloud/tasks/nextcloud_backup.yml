@@ -3,7 +3,7 @@
     path: "~/nextcloud_backup"
     owner: root
     group: root
-    mode: "0770"
+    mode: "u=rwx,g=rx,o="
     state: directory
 
 - name: Install nextcloud_backup.sh
@@ -15,4 +15,4 @@
     dest: "~/nextcloud_backup/nextcloud_backup.sh"
     owner: root
     group: root
-    mode: "0700"
+    mode: "u=rwx,g=rx,o="

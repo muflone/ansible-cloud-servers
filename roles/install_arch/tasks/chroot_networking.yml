@@ -8,7 +8,7 @@
         dest: "{{ install_arch_chroot_path }}/etc/systemd/network/10-static-ethernet.network"
         owner: root
         group: root
-        mode: "0644"
+        mode: "u=rw,g=r,o=r"
       notify:
         - Restart networkd
 
@@ -18,7 +18,7 @@
         state: directory
         owner: root
         group: root
-        mode: "0755"
+        mode: "u=rwx,g=rx,o=rx"
 
     - name: Configure static DNS (static)
       when:
@@ -28,7 +28,7 @@
         dest: "{{ install_arch_chroot_path }}/etc/systemd/network/10-static-ethernet.network.d/dns.conf"
         owner: root
         group: root
-        mode: "0644"
+        mode: "u=rw,g=r,o=r"
       notify:
         - Restart networkd
 
@@ -42,7 +42,7 @@
         dest: "{{ install_arch_chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network"
         owner: root
         group: root
-        mode: "0644"
+        mode: "u=rw,g=r,o=r"
       notify:
         - Restart networkd
 
@@ -52,7 +52,7 @@
         state: directory
         owner: root
         group: root
-        mode: "0755"
+        mode: "u=rwx,g=rx,o=rx"
 
     - name: Configure static DNS (DHCP)
       when:
@@ -62,7 +62,7 @@
         dest: "{{ install_arch_chroot_path }}/etc/systemd/network/10-dhcp-ethernet.network.d/dns.conf"
         owner: root
         group: root
-        mode: "0644"
+        mode: "u=rw,g=r,o=r"
       notify:
         - Restart networkd
 
@@ -77,7 +77,7 @@
       additional_addresses.conf
     owner: root
     group: root
-    mode: "0644"
+    mode: "u=rw,g=r,o=r"
   notify:
     - Restart networkd
 

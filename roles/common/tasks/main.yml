@@ -4,4 +4,4 @@
     dest: "~/.bash_profile"
     owner: root
     group: root
-    mode: "0600"
+    mode: "u=rw,g=,o="

@@ -12,7 +12,7 @@
     path: "{{ dockers_path }}"
     owner: root
     group: docker
-    mode: "0775"
+    mode: "u=rwx,g=rx,o=rx"
     state: directory
 
 - name: Create docker-compose symlink in home

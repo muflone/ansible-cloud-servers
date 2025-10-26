@@ -14,7 +14,7 @@
     dest: "~/.git-credentials"
     owner: root
     group: root
-    mode: "0600"
+    mode: "u=rw,g=,o="
 
 - name: Clone the git repository
   when:
