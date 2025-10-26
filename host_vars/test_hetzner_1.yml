@@ -1,13 +1,12 @@
-filesystem: "ext4"
-system_disks:
-  - /dev/sda
-partition_type: 'mbr'
-dhcp: false
+install_arch_system_disk: "/dev/sda"
+install_arch_system_type: "mbr"
+
 hostname: "test2.muflone.com"
+dhcp: false
 ipv4_address: 157.180.90.27
 ipv4_netmask: /32
 ipv4_gateway: 172.31.1.1
 dns_servers:
   - 8.8.8.8
   - 8.8.4.4
-sshd_port: 31241
+sshd_port: 31243
