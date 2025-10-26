@@ -62,7 +62,7 @@
       - python3
     creates: /tmp/root.x86_64/mnt/bin
 
-- name: Install Arch Linux extra packages from bootstrap chroot
+- name: Install Arch Linux efibootmgr package for GRUB (EFI)
   when:
     - install_arch_system_type == 'efi'
   ansible.builtin.command:
@@ -72,7 +72,7 @@
       - pacstrap
       - "{{ install_arch_chroot_path }}"
       - efibootmgr
-    creates: /tmp/root.x86_64/mnt/bin
+    creates: /tmp/root.x86_64/mnt/usr/bin/efibootmgr
 
 - name: Install ucode update
   when:
