@@ -58,6 +58,7 @@
       - grub
       - openssh
       - pacman-contrib
+      - nano
       - python3
     creates: /tmp/root.x86_64/mnt/bin
 
