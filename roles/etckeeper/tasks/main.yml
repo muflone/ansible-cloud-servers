@@ -35,6 +35,8 @@
     src: "{{ etckeeper_src }}/"
     dest: "{{ etckeeper_path }}/"
     remote_src: true
+    owner: root
+    group: root
     mode: preserve
   register: etckeeper_src_copied
 

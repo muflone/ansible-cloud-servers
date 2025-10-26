@@ -17,6 +17,8 @@
   ansible.builtin.file:
     path: "{{ install_arch_chroot_path }}/efi"
     state: directory
+    owner: root
+    group: root
     mode: "u=rwx,g=rx,o=rx"
 
 - name: Mount the efi filesystem

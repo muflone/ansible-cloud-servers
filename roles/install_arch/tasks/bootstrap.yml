@@ -2,6 +2,8 @@
   ansible.builtin.get_url:
     url: "{{ item }}"
     dest: /tmp/
+    owner: root
+    group: root
     mode: "u=rw,g=,o="
   loop:
     - "https://geo.mirror.pkgbuild.com/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst"
