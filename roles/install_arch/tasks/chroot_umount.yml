@@ -38,3 +38,11 @@
       - "{{ install_arch_chroot_path }}"
   changed_when:
     - true
+
+- name: Unmount filesystems from bootstrap chroot
+  ansible.posix.mount:
+    path: "{{ item }}"
+    state: unmounted
+  with_items:
+    - "/tmp/root.x86_64/mnt/boot"
+    - "/tmp/root.x86_64/mnt"
