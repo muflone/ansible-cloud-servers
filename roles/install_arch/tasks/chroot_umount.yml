@@ -25,7 +25,7 @@
 
 - name: Unmount /boot from the chroot
   when:
-    - partition_type == 'efi'
+    - install_arch_system_type == 'efi'
   ansible.posix.mount:
     path: "{{ install_arch_chroot_path }}/boot"
     state: unmounted

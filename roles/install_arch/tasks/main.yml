@@ -64,7 +64,7 @@
 
 - name: Install Arch Linux extra packages from bootstrap chroot
   when:
-    - partition_type == 'efi'
+    - install_arch_system_type == 'efi'
   ansible.builtin.command:
     argv:
       - chroot

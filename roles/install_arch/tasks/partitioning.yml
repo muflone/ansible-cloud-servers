@@ -11,7 +11,7 @@
 
 - name: Create partitions (MBR)
   when:
-    - partition_type != 'efi'
+    - install_arch_system_type != 'efi'
   ansible.builtin.command:
     argv:
       - sgdisk
@@ -30,7 +30,7 @@
 
 - name: Create partitions (EFI)
   when:
-    - partition_type == 'efi'
+    - install_arch_system_type == 'efi'
   ansible.builtin.command:
     argv:
       - sgdisk
@@ -54,7 +54,7 @@
 
 - name: Create efi partition node
   when:
-    - partition_type == 'efi'
+    - install_arch_system_type == 'efi'
   ansible.builtin.command:
     argv:
       - mknod
@@ -69,7 +69,7 @@
 
 - name: Format the EFI system partition
   when:
-    - partition_type == 'efi'
+    - install_arch_system_type == 'efi'
   ansible.builtin.command:
     argv:
       - mkfs.fat
