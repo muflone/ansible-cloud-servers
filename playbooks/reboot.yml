@@ -1,0 +1,5 @@
+- name: Reboot
+  hosts: cloud:!disabled
+  gather_facts: false
+  roles:
+    - role: reboot

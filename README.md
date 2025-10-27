@@ -39,6 +39,9 @@
 
   Execute regular maintenance, including upgrade the installed packages and
   install extra packages on all the hosts.
+- **playbooks/reboot.yml**
+
+  Reboots all hosts.
 - **playbooks/server_cloud8.yml**
 
   Execute regular maintenance for the host cloud8.muflone.com.
