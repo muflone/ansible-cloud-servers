@@ -50,6 +50,10 @@
 
   Execute regular maintenance for the host cloud8.muflone.com.
 
+- **playbooks/server_cloud9.yml**
+
+  Execute regular maintenance for the host cloud9.muflone.com.
+
 - **playbooks/server_test2.yml**
 
   Execute regular maintenance for the host test2.muflone.com.
