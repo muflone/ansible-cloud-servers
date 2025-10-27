@@ -42,6 +42,10 @@
 - **playbooks/reboot.yml**
 
   Reboots all hosts.
+- **playbooks/server_cloud7.yml**
+
+  Execute regular maintenance for the host cloud7.muflone.com.
+
 - **playbooks/server_cloud8.yml**
 
   Execute regular maintenance for the host cloud8.muflone.com.
