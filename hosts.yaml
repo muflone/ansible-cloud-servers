@@ -1,6 +1,6 @@
 new_servers:
   hosts:
-    test_oracle_1:
+    new_oracle_1:
       ansible_host: 129.151.87.105
       ansible_port: 22
       ansible_user: root
