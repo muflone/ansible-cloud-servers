@@ -6,7 +6,7 @@ new_servers:
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
       ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
-    test_oracle_2:
+    new_oracle_2:
       ansible_host: 129.151.77.107
       ansible_port: 22
       ansible_user: root
