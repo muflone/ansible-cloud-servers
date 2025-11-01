@@ -18,13 +18,16 @@
 
 - name: Configure pulldocker
   when:
+    - pulldocker_yaml is defined
     - not pulldocker_yaml_file.stat.exists
-  ansible.builtin.copy:
-    src: pulldocker.yaml
-    dest: "{{ pulldocker_path }}"
+  ansible.builtin.file:
+    src: "{{ pulldocker_yaml }}"
+    dest: "{{ pulldocker_path }}/pulldocker.yaml"
+    state: link
+    force: true
+    follow: false
     owner: root
     group: root
-    mode: "u=rw,g=,o="
 
 - name: Copy systemd service
   ansible.builtin.template:

@@ -24,6 +24,7 @@
 
     - role: pulldocker
       pulldocker_path: "{{ base_path }}/pulldocker"
+      pulldocker_yaml: "cloud8.yaml"
 
     - role: git_repo
       git_repo_repository_dir: "{{ dockers_path }}/cloud8-mariadb"
