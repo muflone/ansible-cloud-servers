@@ -25,3 +25,7 @@
     - role: pulldocker
       pulldocker_path: "{{ base_path }}/pulldocker"
       pulldocker_yaml: "cloud7.yaml"
+
+    - role: git_repo
+      git_repo_repository_dir: "{{ dockers_path }}/cloud7-nginx-proxy-manager"
+      git_repo_git_repository: "https://github.com/muflone/docker-cloud-nginx-proxy-manager"
