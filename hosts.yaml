@@ -45,6 +45,12 @@ cloud:
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
       ansible_become: true
+    test1:
+      ansible_host: test1.muflone.com
+      ansible_port: 31244
+      ansible_user: root
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
     test2:
       ansible_host: test2.muflone.com
       ansible_port: 31243
