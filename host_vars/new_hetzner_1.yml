@@ -1,0 +1,12 @@
+install_arch_system_disk: "/dev/sda"
+install_arch_system_type: "mbr"
+
+hostname: "test1.muflone.com"
+dhcp: false
+ipv4_address: 135.181.107.14
+ipv4_netmask: /32
+ipv4_gateway: 172.31.1.1
+dns_servers:
+  - 8.8.8.8
+  - 8.8.4.4
+sshd_port: 31244

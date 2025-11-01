@@ -12,6 +12,12 @@ new_servers:
       ansible_user: root
       ansible_python_interpreter: /usr/bin/python3
       ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    new_hetzner_1:
+      ansible_host: 135.181.107.14
+      ansible_port: 22
+      ansible_user: root
+      ansible_python_interpreter: /usr/bin/python3
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
     new_hetzner_2:
       ansible_host: 157.180.90.27
       ansible_port: 22
