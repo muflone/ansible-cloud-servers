@@ -1,1 +1,2 @@
+host_vars/cloud7.yml filter=git-crypt diff=git-crypt
 host_vars/cloud8.yml filter=git-crypt diff=git-crypt
