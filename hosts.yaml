@@ -42,3 +42,4 @@ cloud:
 
 disabled:
   hosts:
+    test1
