@@ -8,7 +8,7 @@
 - name: Install pulldocker
   ansible.builtin.pip:
     name: pulldocker
-    virtualenv_command: "{{ ansible_python_interpreter }} -m venv"
+    virtualenv_command: "{{ ansible_facts['python']['executable'] }} -m venv"
     virtualenv: "{{ pulldocker_path }}/venv"
 
 - name: Check if pulldocker.yaml exists
