@@ -92,6 +92,14 @@
   changed_when:
     - "install_arch_chroot_systemd_firstboot.rc == 0"
 
+- name: Copy vconsole.conf
+  ansible.builtin.copy:
+    src: vconsole.conf
+    dest: "{{ install_arch_chroot_path }}/etc"
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+
 - name: Run mkinitcpio
   ansible.builtin.command:
     argv:
