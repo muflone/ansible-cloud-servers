@@ -37,7 +37,14 @@
     group: root
     mode: "u=rw,g=r,o=r"
 
+- name: Check if pulldocker.timer exists
+  ansible.builtin.stat:
+    path: "{{ pulldocker_path }}/pulldocker.timer"
+  register: pulldocker_timer_file
+
 - name: Copy systemd timer
+  when:
+    - not pulldocker_timer_file.stat.exists
   ansible.builtin.copy:
     src: pulldocker.timer
     dest: "{{ pulldocker_path }}"
