@@ -1,5 +1,7 @@
 base_path: "/opt"
 etckeeper_path: "/opt/etckeeper-etc.git"
+etckeeper_user_name: "Muflone"
+etckeeper_user_email: "muflone@localhost"
 dockers_path: "/opt/docker-compose"
 packages:
   - nano
