@@ -76,7 +76,7 @@
 
 - name: Install ucode update
   when:
-    - ansible_virtualization_role == 'host'
+    - ansible_facts['virtualization_role'] == 'host'
   ansible.builtin.include_tasks: ucode.yaml
 
 - name: Run systemd-firstboot
