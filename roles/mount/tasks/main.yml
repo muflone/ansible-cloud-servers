@@ -1,0 +1,10 @@
+- name: Mount volume
+  ansible.posix.mount:
+    src: "{{ mount_source }}"
+    path: "{{ mount_destination }}"
+    opts: "{{ mount_options | default('defaults') }}"
+    boot: "{{ mount_boot }}"
+    state: mounted
+    fstype: "{{ mount_fstype }}"
+    dump: "0"
+    passno: "2"
