@@ -3,7 +3,7 @@
     - install_arch_rescue_type != 'oracle-alpine'
   ansible.builtin.get_url:
     url: "{{ item }}"
-    dest: /tmp/
+    dest: /tmp
     owner: root
     group: root
     mode: "u=rw,g=,o="

@@ -114,7 +114,7 @@
 - name: Setup pacman-init.service on first boot
   ansible.builtin.copy:
     src: pacman-init.service
-    dest: "{{ install_arch_chroot_path }}/etc/systemd/system/"
+    dest: "{{ install_arch_chroot_path }}/etc/systemd/system"
     owner: root
     group: root
     mode: "u=rw,g=r,o=r"
