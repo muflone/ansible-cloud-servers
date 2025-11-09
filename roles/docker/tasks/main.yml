@@ -30,3 +30,35 @@
 - name: Create a network
   community.docker.docker_network:
     name: web
+
+- name: Check if the docker registry is already configured
+  when:
+    - docker_registry is defined
+  ansible.builtin.command:
+    argv:
+      - grep
+      - -q
+      - "{{ docker_registry }}"
+      - ".docker/config.json"
+  register: docker_registry_configuration
+  failed_when: false
+  changed_when: false
+
+- name: Authenticate to a docker registry
+  when:
+    - docker_registry is defined
+    - docker_registry_user is defined
+    - docker_registry_password is defined
+    - docker_registry_configuration.rc != 0
+  ansible.builtin.command:
+    argv:
+      - docker
+      - login
+      - -u
+      - "{{ docker_registry_user }}"
+      - -p
+      - "{{ docker_registry_password }}"
+      - "{{ docker_registry }}"
+  register: docker_registry_login
+  changed_when:
+    - "docker_registry_login.rc == 0"
