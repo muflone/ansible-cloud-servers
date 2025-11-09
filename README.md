@@ -32,23 +32,33 @@
 
   **Warning**: all the data on all the servers will be deleted, the disks will
   be re-partitioned and a new OS (Arch Linux) will be installed on them.
+
+
 - **playbooks/ping.yml**
 
   Check if all the hosts are up and reachable from ansible.
+
+
 - **playbooks/maintenance.yml**
 
   Execute regular maintenance, including upgrade the installed packages and
   install extra packages on all the hosts.
+
+
 - **playbooks/reboot.yml**
 
   Reboots all hosts.
+
+
 - **playbooks/server_cloud7.yml**
 
   Execute regular maintenance for the host cloud7.muflone.com.
 
+
 - **playbooks/server_cloud8.yml**
 
   Execute regular maintenance for the host cloud8.muflone.com.
+
 
 - **playbooks/server_cloud9.yml**
 
