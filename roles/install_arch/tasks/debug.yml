@@ -2,6 +2,6 @@
   ansible.builtin.debug:
     var: ansible_facts
 
-# - name: Stop here
-#   ansible.builtin.fail:
-#     msg: "Stop here"
+- name: Stop here
+  ansible.builtin.fail:
+    msg: "Stop here"
