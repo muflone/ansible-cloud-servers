@@ -1,9 +1,5 @@
 new_servers:
   hosts:
-    new_oracle_1:
-      ansible_host: 129.151.87.105
-      ansible_port: 22
-      ansible_user: root
     new_oracle_2:
       ansible_host: 129.151.77.107
       ansible_port: 22
