@@ -1,66 +1,4 @@
-- name: Download Arch Linux bootstrap image
-  when:
-    - install_arch_rescue_type != 'oracle-alpine'
-  ansible.builtin.get_url:
-    url: "{{ item }}"
-    dest: /tmp
-    owner: root
-    group: root
-    mode: "u=rw,g=,o="
-  loop:
-    - "https://geo.mirror.pkgbuild.com/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst"
-    - "https://archlinux.org/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst.sig"
-
-- name: Get Arch Linux ISO signature key
-  when:
-    - install_arch_rescue_type != 'oracle-alpine'
-  ansible.builtin.command:
-    argv:
-      - gpg
-      - --auto-key-locate
-      - clear,wkd
-      - --locate-external-key
-      - pierre@archlinux.org
-  register: install_arch_gpg_locate
-  changed_when:
-    - "install_arch_gpg_locate.rc == 0"
-
-- name: Verify Arch Linux bootstrap image signature
-  when:
-    - install_arch_rescue_type != 'oracle-alpine'
-  ansible.builtin.command:
-    argv:
-      - gpg
-      - --keyserver-options
-      - auto-key-retrieve
-      - --verify
-      - "/tmp/archlinux-bootstrap-x86_64.tar.zst.sig"
-      - "/tmp/archlinux-bootstrap-x86_64.tar.zst"
-  changed_when:
-    - false
-
-- name: Decompress Arch Linux boostrap image
-  when:
-    - install_arch_rescue_type != 'oracle-alpine'
-  ansible.builtin.command:
-    argv:
-      - zstd
-      - -d
-      - /tmp/archlinux-bootstrap-x86_64.tar.zst
-    creates: /tmp/archlinux-bootstrap-x86_64.tar
-
-- name: Extract Arch Linux boostrap image
-  when:
-    - install_arch_rescue_type != 'oracle-alpine'
-  ansible.builtin.unarchive:
-    src: /tmp/archlinux-bootstrap-x86_64.tar
-    dest: /tmp
-    remote_src: true
-    creates: /tmp/root.x86_64
-
 - name: Remount tmpfs
-  when:
-    - install_arch_rescue_type == 'oracle-alpine'
   ansible.posix.mount:
     path: "/"
     state: "remounted"
@@ -68,8 +6,6 @@
     fstype: "tmpfs"
 
 - name: Download, decompress and extract Arch Linux boostrap image
-  when:
-    - install_arch_rescue_type == 'oracle-alpine'
   ansible.builtin.shell:
     cmd: >
       set -o pipefail
