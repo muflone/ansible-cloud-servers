@@ -1,4 +1,4 @@
-install_arch_system_disk: "/dev/sda"
+install_arch_system_disk: "sda"
 install_arch_system_type: "mbr"
 
 hostname: "test2.muflone.com"

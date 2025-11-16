@@ -4,7 +4,7 @@
 
 - name: Mount the root filesystem
   ansible.posix.mount:
-    src: "{{ install_arch_root_partname }}"
+    src: "/dev/{{ install_arch_root_partname }}"
     path: "{{ install_arch_chroot_path }}"
     state: mounted
     fstype: ext4
@@ -23,7 +23,7 @@
   when:
     - install_arch_system_type == 'efi'
   ansible.posix.mount:
-    src: "{{ install_arch_efi_partname }}"
+    src: "/dev/{{ install_arch_efi_partname }}"
     path: "{{ install_arch_chroot_path }}/boot"
     state: mounted
     fstype: vfat

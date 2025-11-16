@@ -1,4 +1,4 @@
-install_arch_system_disk: "/dev/sda"
+install_arch_system_disk: "sda"
 install_arch_grub_needs_serial: true
 install_arch_system_type: "efi"
 

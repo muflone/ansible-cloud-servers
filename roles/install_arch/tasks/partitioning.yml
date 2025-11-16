@@ -3,7 +3,7 @@
     argv:
       - sgdisk
       - --zap-all
-      - "{{ install_arch_system_disk }}"
+      - "/dev/{{ install_arch_system_disk }}"
   register: install_arch_sgdisk
   changed_when:
     - "install_arch_sgdisk.rc == 0"
@@ -23,7 +23,7 @@
       - --new=0:0:0
       - --change-name=0:root
       - --typecode=0:8304
-      - "{{ install_arch_system_disk }}"
+      - "/dev/{{ install_arch_system_disk }}"
   register: install_arch_sgdisk
   changed_when:
     - "install_arch_sgdisk.rc == 0"
@@ -42,7 +42,7 @@
       - --new=0:0:0
       - --change-name=0:root
       - --typecode=0:8300
-      - "{{ install_arch_system_disk }}"
+      - "/dev/{{ install_arch_system_disk }}"
   register: install_arch_sgdisk
   changed_when:
     - "install_arch_sgdisk.rc == 0"
@@ -60,12 +60,12 @@
       - mknod
       - -m
       - "u=rw,g=rw,o="
-      - "{{ install_arch_efi_partname }}"
+      - "/dev/{{ install_arch_efi_partname }}"
       - b
       - 8
       - 1
   args:
-    creates: "{{ install_arch_efi_partname }}"
+    creates: "/dev/{{ install_arch_efi_partname }}"
 
 - name: Format the EFI system partition
   when:
@@ -79,7 +79,7 @@
       - 4096
       - -n
       - ESP
-      - "{{ install_arch_efi_partname }}"
+      - "/dev/{{ install_arch_efi_partname }}"
   changed_when:
     - false
 
@@ -89,12 +89,12 @@
       - mknod
       - -m
       - "u=rw,g=rw,o="
-      - "{{ install_arch_root_partname }}"
+      - "/dev/{{ install_arch_root_partname }}"
       - b
       - 8
       - 2
   args:
-    creates: "{{ install_arch_root_partname }}"
+    creates: "/dev/{{ install_arch_root_partname }}"
 
 - name: Format the root partition
   ansible.builtin.command:
@@ -105,6 +105,6 @@
       - -m
       - 0
       - -FF
-      - "{{ install_arch_root_partname }}"
+      - "/dev/{{ install_arch_root_partname }}"
   changed_when:
     - true
