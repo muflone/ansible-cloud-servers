@@ -76,6 +76,7 @@
 
       curl "https://geo.mirror.pkgbuild.com/iso/{{ install_arch_bootstrap_version }}/archlinux-bootstrap-x86_64.tar.zst" |
       zstd -d --stdout | tar xv --exclude=root.x86_64/usr/share/locale --exclude=root.x86_64/usr/share/man -C /tmp
+    executable: /bin/bash
     creates: /tmp/root.x86_64
 
 - name: Copy resolv.conf to bootstrap chroot
