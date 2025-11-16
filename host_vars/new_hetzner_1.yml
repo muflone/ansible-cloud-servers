@@ -3,7 +3,7 @@ install_arch_system_type: "mbr"
 
 hostname: "test1.muflone.com"
 dhcp: false
-ipv4_address: 135.181.107.14
+ipv4_address: 37.27.10.116
 ipv4_netmask: /32
 ipv4_gateway: 172.31.1.1
 dns_servers:
