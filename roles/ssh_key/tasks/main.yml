@@ -12,10 +12,10 @@
 
 - name: Export SSH private key
   when:
-    - ssh_private_key is defined
+    - ssh_key_private_key is defined
   ansible.builtin.copy:
-    dest: "{{ ssh_key_ssh_config_dir }}/{{ ssh_private_key_name }}"
-    content: '{{ ssh_private_key | b64decode }}'
+    dest: "{{ ssh_key_ssh_config_dir }}/{{ ssh_key_private_key_name }}"
+    content: '{{ ssh_key_private_key | b64decode }}'
     owner: root
     group: root
     mode: "u=rw,g=,o="
@@ -24,8 +24,8 @@
   when:
     - ssh_public_key is defined
   ansible.builtin.copy:
-    dest: "{{ ssh_key_ssh_config_dir }}/{{ ssh_public_key_name }}"
-    content: '{{ ssh_public_key | b64decode }}'
+    dest: "{{ ssh_key_ssh_config_dir }}/{{ ssh_key_public_key_name }}"
+    content: '{{ ssh_key_public_key | b64decode }}'
     owner: root
     group: root
     mode: "u=rw,g=,o="
